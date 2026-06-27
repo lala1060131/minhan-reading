@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>旻翰閱讀小教室｜單元10 唐詩宋詞</title>
+<style>
+  :root {
+    --main: #7D5A2F;
+    --dark: #5C3D1E;
+    --light: #FDF5E6;
+    --accent: #4A2C0A;
+    --gold: #C9A84C;
+    --goldlight: #FEF9E7;
+    --bg: #FDFAF4;
+    --card: #FFFFFF;
+    --text: #2C1A06;
+    --muted: #8B6914;
+    --correct: #2E7D32;
+    --wrong: #C62828;
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans TC', '微軟正黑體', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  .site-header {
+    background: linear-gradient(135deg, #5C3D1E 0%, #7D5A2F 45%, #C9A84C 100%);
+    padding: 28px 20px 22px; text-align: center;
+    box-shadow: 0 4px 16px rgba(93,58,30,0.35);
+  }
+  .site-header .emoji { font-size: 2.6rem; display: block; margin-bottom: 6px; }
+  .site-header h1 { font-size: 1.7rem; color: #FEF3C7; font-weight: 900; letter-spacing: 3px; text-shadow: 0 2px 8px rgba(0,0,0,0.35); }
+  .site-header p { color: #E9D5A0; font-size: 0.9rem; margin-top: 4px; }
+  .progressWrap { padding: 18px 20px 8px; max-width: 700px; margin: 0 auto; }
+  .progressLabel { font-size: 0.85rem; color: var(--muted); margin-bottom: 6px; font-weight: 600; }
+  .progressBar { background: #E9D5A0; border-radius: 99px; height: 12px; overflow: hidden; }
+  .progressFill { background: linear-gradient(90deg, #7D5A2F, #C9A84C); height: 100%; border-radius: 99px; transition: width 0.5s ease; }
+  #listView { max-width: 700px; margin: 0 auto; padding: 10px 16px 40px; }
+  .sectionTitle { font-size: 0.8rem; font-weight: 700; color: var(--muted); letter-spacing: 2px; margin: 18px 0 10px; }
+  .articleGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+  .listCard {
+    background: var(--card); border: 2px solid #E9D5A0; border-radius: var(--radius);
+    padding: 14px 12px; cursor: pointer; transition: all 0.2s; text-align: center; position: relative;
+  }
+  .listCard:hover { border-color: var(--gold); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(201,168,76,0.25); }
+  .listCard .num { font-size: 0.7rem; color: var(--muted); font-weight: 700; }
+  .listCard .title { font-size: 0.95rem; font-weight: 700; color: var(--text); margin-top: 4px; line-height: 1.4; }
+  .listCard .badge { position: absolute; top: 8px; right: 8px; font-size: 0.65rem; padding: 2px 6px; border-radius: 99px; font-weight: 700; }
+  .listCard.done { border-color: var(--correct); background: #F1F8F2; }
+  .listCard.done .badge { background: var(--correct); color: #fff; }
+  .listCard.undone .badge { background: #E9D5A0; color: #5C3D1E; }
+  #readerView { display: none; max-width: 700px; margin: 0 auto; padding: 10px 16px 60px; }
+  .backBtn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--main); color: #FEF3C7; border: none; border-radius: 99px;
+    padding: 8px 18px; font-size: 0.9rem; font-weight: 700; cursor: pointer;
+    margin-bottom: 16px; transition: background 0.2s;
+  }
+  .backBtn:hover { background: var(--dark); }
+  .readerCard {
+    background: var(--card); border-radius: var(--radius); padding: 24px 20px;
+    box-shadow: 0 4px 20px rgba(125,90,47,0.1); border: 2px solid #E9D5A0; margin-bottom: 16px;
+  }
+  .articleTitle { font-size: 1.3rem; font-weight: 900; color: var(--main); margin-bottom: 6px; text-align: center; }
+  .articleAuthor { font-size: 0.85rem; color: var(--gold); text-align: center; margin-bottom: 18px; font-weight: 600; letter-spacing: 1px; }
+  /* Poem display */
+  .poemBox {
+    background: var(--light); border-left: 4px solid var(--gold);
+    border-radius: 10px; padding: 18px 20px; margin-bottom: 18px;
+    font-size: 1.15rem; line-height: 3.2; text-align: center; color: var(--accent);
+    font-weight: 700; letter-spacing: 2px;
+  }
+  .poemBox ruby { ruby-align: center; }
+  .poemBox rt { font-size: 0.45em; color: var(--muted); letter-spacing: 0.5px; font-weight: 400; }
+  .articleBody { font-size: 1rem; line-height: 2.2; color: var(--text); }
+  ruby { ruby-align: center; }
+  rt { font-size: 0.5em; color: var(--muted); }
+  .vocabSection { margin-top: 20px; }
+  .vocabTitle, .quizTitle { font-size: 0.85rem; font-weight: 700; color: var(--muted); letter-spacing: 2px; margin-bottom: 10px; }
+  .vocabCard { background: var(--goldlight); border-left: 4px solid var(--gold); border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; }
+  .vocabWord { font-weight: 900; color: var(--main); font-size: 1rem; }
+  .vocabType { font-size: 0.7rem; background: var(--gold); color: #fff; border-radius: 99px; padding: 1px 7px; margin-left: 6px; vertical-align: middle; }
+  .vocabZy { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+  .vocabMeaning { font-size: 0.9rem; color: var(--text); margin-top: 4px; }
+  .vocabExample { font-size: 0.85rem; color: var(--muted); margin-top: 4px; font-style: italic; }
+  .quizSection { margin-top: 20px; }
+  .quizCard { background: var(--card); border: 2px solid #E9D5A0; border-radius: var(--radius); padding: 16px; margin-bottom: 14px; }
+  .quizQ { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 12px; line-height: 1.6; }
+  .quizOpts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .optBtn {
+    background: var(--light); border: 2px solid #E9D5A0; border-radius: 10px;
+    padding: 10px 12px; font-size: 0.9rem; font-weight: 600; color: var(--text);
+    cursor: pointer; transition: all 0.18s; text-align: left; line-height: 1.4;
+  }
+  .optBtn:hover:not(:disabled) { border-color: var(--gold); background: var(--goldlight); }
+  .optBtn.correct { background: #E8F5E9; border-color: var(--correct); color: #1B4332; }
+  .optBtn.wrong { background: #FFEBEE; border-color: var(--wrong); color: #7B1414; }
+  .optBtn:disabled { cursor: default; }
+  .explanation { display: none; margin-top: 10px; background: var(--goldlight); border-radius: 8px; padding: 10px 12px; font-size: 0.88rem; color: #7D6608; border-left: 3px solid var(--gold); }
+  .completionBanner {
+    display: none; text-align: center;
+    background: linear-gradient(135deg, #5C3D1E, #C9A84C);
+    color: #FEF3C7; border-radius: var(--radius); padding: 24px; margin-top: 16px; font-size: 1.1rem; font-weight: 700;
+  }
+  .completionBanner .big { font-size: 2rem; display: block; margin-bottom: 8px; }
+  @media (max-width: 480px) {
+    .articleGrid { grid-template-columns: repeat(2, 1fr); }
+    .quizOpts { grid-template-columns: 1fr; }
+    .site-header h1 { font-size: 1.4rem; }
+  }
+</style>
+</head>
+<body>
+<div class="site-header">
+  <span class="emoji">📜</span>
+  <h1>單元十・唐詩宋詞</h1>
+  <p>旻翰閱讀小教室｜20篇文章等你來挑戰！</p>
+</div>
+<div class="progressWrap">
+  <div class="progressLabel">閱讀進度：<span id="doneCount">0</span> / 20 篇完成</div>
+  <div class="progressBar"><div class="progressFill" id="progressFill" style="width:0%"></div></div>
+</div>
+<div id="listView">
+  <div class="sectionTitle">📚 文章列表</div>
+  <div class="articleGrid" id="articleGrid"></div>
+</div>
+<div id="readerView">
+  <button class="backBtn" onclick="showList()">← 返回列表</button>
+  <div id="articleContent"></div>
+</div>
+<script>
+const ARTICLES = [
+  {
+    id:1, title:"靜夜思", author:"唐・李白",
+    poem:`<ruby>床<rt>ㄔㄨㄤˊ</rt></ruby><ruby>前<rt>ㄑㄧㄢˊ</rt></ruby><ruby>明<rt>ㄇㄧㄥˊ</rt></ruby><ruby>月<rt>ㄩㄝˋ</rt></ruby><ruby>光<rt>ㄍㄨㄤ</rt></ruby>，<br><ruby>疑<rt>ㄧˊ</rt></ruby><ruby>是<rt>ㄕˋ</rt></ruby><ruby>地<rt>ㄉㄧˋ</rt></ruby><ruby>上<rt>ㄕㄤˋ</rt></ruby><ruby>霜<rt>ㄕㄨㄤ</rt></ruby>。<br><ruby>舉<rt>ㄐㄩˇ</rt></ruby><ruby>頭<rt>ㄊㄡˊ</rt></ruby><ruby>望<rt>ㄨㄤˋ</rt></ruby><ruby>明<rt>ㄇㄧㄥˊ</rt></ruby><ruby>月<rt>ㄩㄝˋ</rt></ruby>，<br><ruby>低<rt>ㄉㄧ</rt></ruby><ruby>頭<rt>ㄊㄡˊ</rt></ruby><ruby>思<rt>ㄙ</rt></ruby><ruby>故<rt>ㄍㄨˋ</rt></ruby><ruby>鄉<rt>ㄒㄧㄤ</rt></ruby>。`,
+    body:`這首詩是唐代詩人李白描寫思念故鄉的名作。詩人在夜裡看見窗前明亮的月光，以為是地上降落的霜雪。抬起頭仰望明月，低下頭不禁思念起遙遠的故鄉。全詩只有二十個字，卻把思鄉之情表達得深刻動人，是家喻戶曉的千古名篇。`,
+    vocab:[
+      {w:"疑",zy:"ㄧˊ",type:"動詞",meaning:"懷疑、以為",example:"他疑心地看著眼前的情況，不敢確定。"},
+      {w:"舉頭",zy:"ㄐㄩˇ ㄊㄡˊ",type:"動詞",meaning:"抬起頭來",example:"他舉頭仰望星空，心裡充滿感動。"},
+      {w:"故鄉",zy:"ㄍㄨˋ ㄒㄧㄤ",type:"名詞",meaning:"自己出生或長大的地方，家鄉",example:"遊子在外，最思念的還是故鄉的味道。"}
+    ],
+    quiz:[
+      {q:"詩人把月光比喻成什麼？",opts:["白雪","霜雪","水面倒影","白色花瓣"],ans:1,exp:"詩人說「疑是地上霜」，把明亮的月光比喻成地上的霜雪。"},
+      {q:"「低頭思故鄉」表達了詩人什麼樣的心情？",opts:["開心地想家","傷心哭泣","深深思念故鄉","害怕夜晚"],ans:2,exp:"「低頭思故鄉」表達詩人深深思念家鄉的心情。"},
+      {q:"這首詩的作者是誰？",opts:["杜甫","王維","白居易","李白"],ans:3,exp:"這首詩是「唐代詩人李白」的作品。"}
+    ]
+  },
+  {
+    id:2, title:"春曉", author:"唐・孟浩然",
+    poem:`<ruby>春<rt>ㄔㄨㄣ</rt></ruby><ruby>眠<rt>ㄇㄧㄢˊ</rt></ruby><ruby>不<rt>ㄅㄨˋ</rt></ruby><ruby>覺<rt>ㄐㄩㄝˊ</rt></ruby><ruby>曉<rt>ㄒㄧㄠˇ</rt></ruby>，<br><ruby>處<rt>ㄔㄨˋ</rt></ruby><ruby>處<rt>ㄔㄨˋ</rt></ruby><ruby>聞<rt>ㄨㄣˊ</rt></ruby><ruby>啼<rt>ㄊㄧˊ</rt></ruby><ruby>鳥<rt>ㄋㄧㄠˇ</rt></ruby>。<br><ruby>夜<rt>ㄧㄝˋ</rt></ruby><ruby>來<rt>ㄌㄞˊ</rt></ruby><ruby>風<rt>ㄈㄥ</rt></ruby><ruby>雨<rt>ㄩˇ</rt></ruby><ruby>聲<rt>ㄕㄥ</rt></ruby>，<br><ruby>花<rt>ㄏㄨㄚ</rt></ruby><ruby>落<rt>ㄌㄨㄛˋ</rt></ruby><ruby>知<rt>ㄓ</rt></ruby><ruby>多<rt>ㄉㄨㄛ</rt></ruby><ruby>少<rt>ㄕㄠˇ</rt></ruby>？`,
+    body:`這首詩描寫春天早晨的景象。春天睡眠舒適，不知不覺天已亮了，到處都聽見鳥兒啼叫。昨夜刮風下雨，不知道有多少花朵已被吹落。詩人以輕鬆的筆調，表達對春天美景既喜愛又有些惋惜的複雜心情，是流傳千年的春日名詩。`,
+    vocab:[
+      {w:"春眠",zy:"ㄔㄨㄣ ㄇㄧㄢˊ",type:"名詞",meaning:"春天的睡眠，因氣候舒適而特別香甜",example:"春眠不覺曉，說的就是春天讓人睡得特別沉。"},
+      {w:"啼鳥",zy:"ㄊㄧˊ ㄋㄧㄠˇ",type:"名詞",meaning:"啼叫的鳥，指鳥兒清晨鳴叫",example:"清晨窗外啼鳥聲聲，把她從夢中喚醒。"},
+      {w:"惋惜",zy:"ㄨㄢˇ ㄒㄧ",type:"動詞/形容詞",meaning:"對美好事物的消逝感到可惜、遺憾",example:"看見花瓣飄落，她不禁感到惋惜。"}
+    ],
+    quiz:[
+      {q:"詩人為什麼沒有察覺天亮了？",opts:["他沒有窗戶","春天氣候舒適，睡得太沉","他工作太累了","外面沒有聲音"],ans:1,exp:"「春眠不覺曉」說的是春天氣候舒適，睡得沉，不知不覺天就亮了。"},
+      {q:"詩人擔心昨夜的風雨造成什麼影響？",opts:["鳥巢被吹走了","行人被淋濕了","花朵被吹落了","田地被淹沒了"],ans:2,exp:"「花落知多少」，詩人擔心昨夜風雨把花朵都吹落了。"},
+      {q:"這首詩是哪個朝代的作品？",opts:["宋代","明代","唐代","清代"],ans:2,exp:"這是「唐代詩人孟浩然」的作品。"}
+    ]
+  },
+  {
+    id:3, title:"登鸛雀樓", author:"唐・王之渙",
+    poem:`<ruby>白<rt>ㄅㄞˊ</rt></ruby><ruby>日<rt>ㄖˋ</rt></ruby><ruby>依<rt>ㄧ</rt></ruby><ruby>山<rt>ㄕㄢ</rt></ruby><ruby>盡<rt>ㄐㄧㄣˋ</rt></ruby>，<br><ruby>黃<rt>ㄏㄨㄤˊ</rt></ruby><ruby>河<rt>ㄏㄜˊ</rt></ruby><ruby>入<rt>ㄖㄨˋ</rt></ruby><ruby>海<rt>ㄏㄞˇ</rt></ruby><ruby>流<rt>ㄌㄧㄡˊ</rt></ruby>。<br><ruby>欲<rt>ㄩˋ</rt></ruby><ruby>窮<rt>ㄑㄩㄥˊ</rt></ruby><ruby>千<rt>ㄑㄧㄢ</rt></ruby><ruby>里<rt>ㄌㄧˇ</rt></ruby><ruby>目<rt>ㄇㄨˋ</rt></ruby>，<br><ruby>更<rt>ㄍㄥˋ</rt></ruby><ruby>上<rt>ㄕㄤˋ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>層<rt>ㄘㄥˊ</rt></ruby><ruby>樓<rt>ㄌㄡˊ</rt></ruby>。`,
+    body:`詩人站在鸛雀樓上，看見太陽依傍著山脈逐漸西沉，黃河的水奔騰流入大海。想要看盡千里遠的風景，就必須再往上爬一層樓。後兩句已成為千古名句，比喻想要達到更高的目標，就必須繼續努力、不斷進取，充滿積極向上的人生哲理。`,
+    vocab:[
+      {w:"欲窮",zy:"ㄩˋ ㄑㄩㄥˊ",type:"動詞",meaning:"想要窮盡、看到最遠最完整的",example:"欲窮千里目，代表想要看盡最遠的風景。"},
+      {w:"進取",zy:"ㄐㄧㄣˋ ㄑㄩˇ",type:"動詞/形容詞",meaning:"積極向前、努力追求更高的目標",example:"他有進取心，無論遇到什麼困難都不放棄。"},
+      {w:"哲理",zy:"ㄓㄜˊ ㄌㄧˇ",type:"名詞",meaning:"深刻的道理，能讓人理解人生或世界的智慧",example:"這首詩的最後兩句充滿人生哲理，耐人尋味。"}
+    ],
+    quiz:[
+      {q:"「更上一層樓」在詩中是什麼意思？",opts:["樓很高，要繼續往上爬才能看得更遠","請朋友到樓上喝茶","樓已經夠高了，不用再爬","欣賞夕陽最好的位置"],ans:0,exp:"「更上一層樓」字面意思是再爬一層樓，才能看見更遠的風景。"},
+      {q:"這首詩後兩句常被用來比喻什麼？",opts:["旅行要走得更遠","想達到更高目標，就要不斷努力進取","黃河的水流向大海","登高要小心安全"],ans:1,exp:"後兩句比喻「想達到更高的目標，就必須繼續努力、不斷進取」。"},
+      {q:"詩人在鸛雀樓上看見什麼景象？",opts:["大雪覆蓋山脈","太陽西沉與黃河入海","月亮升起與繁星閃爍","春花盛開與飛鳥翱翔"],ans:1,exp:"詩人看見「白日依山盡，黃河入海流」，即太陽西沉與黃河奔流入海。"}
+    ]
+  },
+  {
+    id:4, title:"涼州詞", author:"唐・王翰",
+    poem:`<ruby>葡<rt>ㄆㄨˊ</rt></ruby><ruby>萄<rt>ㄊㄠˊ</rt></ruby><ruby>美<rt>ㄇㄟˇ</rt></ruby><ruby>酒<rt>ㄐㄧㄡˇ</rt></ruby><ruby>夜<rt>ㄧㄝˋ</rt></ruby><ruby>光<rt>ㄍㄨㄤ</rt></ruby><ruby>杯<rt>ㄅㄟ</rt></ruby>，<br><ruby>欲<rt>ㄩˋ</rt></ruby><ruby>飲<rt>ㄧㄣˇ</rt></ruby><ruby>琵<rt>ㄆㄧˊ</rt></ruby><ruby>琶<rt>ㄆㄚˊ</rt></ruby><ruby>馬<rt>ㄇㄚˇ</rt></ruby><ruby>上<rt>ㄕㄤˋ</rt></ruby><ruby>催<rt>ㄘㄨㄟ</rt></ruby>。<br><ruby>醉<rt>ㄗㄨㄟˋ</rt></ruby><ruby>臥<rt>ㄨㄛˋ</rt></ruby><ruby>沙<rt>ㄕㄚ</rt></ruby><ruby>場<rt>ㄔㄤˊ</rt></ruby><ruby>君<rt>ㄐㄩㄣ</rt></ruby><ruby>莫<rt>ㄇㄛˋ</rt></ruby><ruby>笑<rt>ㄒㄧㄠˋ</rt></ruby>，<br><ruby>古<rt>ㄍㄨˇ</rt></ruby><ruby>來<rt>ㄌㄞˊ</rt></ruby><ruby>征<rt>ㄓㄥ</rt></ruby><ruby>戰<rt>ㄓㄢˋ</rt></ruby><ruby>幾<rt>ㄐㄧˇ</rt></ruby><ruby>人<rt>ㄖㄣˊ</rt></ruby><ruby>回<rt>ㄏㄨㄟˊ</rt></ruby>？`,
+    body:`這首詩描寫邊疆將士出征前飲酒的情景。葡萄美酒倒在夜光杯中，正想喝酒，馬上的琵琶催促出發。喝醉了倒臥在沙場上，請你不要嘲笑，自古以來出征作戰的人，又有幾個能平安回來呢？詩中既有豪情，又流露出對生死無常的感慨，語氣悲壯。`,
+    vocab:[
+      {w:"征戰",zy:"ㄓㄥ ㄓㄢˋ",type:"動詞",meaning:"出征打仗，為國家征伐作戰",example:"古代將士征戰沙場，保家衛國。"},
+      {w:"醉臥",zy:"ㄗㄨㄟˋ ㄨㄛˋ",type:"動詞",meaning:"喝醉了躺下來，形容豪飲後的狀態",example:"英雄醉臥沙場，表現出無畏的豪情。"},
+      {w:"悲壯",zy:"ㄅㄟ ㄓㄨㄤˋ",type:"形容詞",meaning:"既悲傷又壯烈，令人感動又心酸",example:"這首歌旋律悲壯，唱出了戰士的心聲。"}
+    ],
+    quiz:[
+      {q:"詩中的將士要喝酒時，什麼打斷了他們？",opts:["將軍下令出發","馬上的琵琶催促出發","敵人突然來襲","天突然下起了雨"],ans:1,exp:"「欲飲琵琶馬上催」，正想喝酒，馬上的琵琶聲催促出發。"},
+      {q:"「古來征戰幾人回」表達了什麼感嘆？",opts:["古代將士都能平安回家","打仗是很有趣的事","自古以來出征的人能平安回來的很少","征戰的路途非常遙遠"],ans:2,exp:"「古來征戰幾人回」感嘆自古以來出征作戰，能活著回來的人很少。"},
+      {q:"「醉臥沙場君莫笑」中，「君莫笑」是什麼意思？",opts:["你不要跟我一起笑","你不要嘲笑我","你也一起來喝酒","你要小心不要跌倒"],ans:1,exp:"「君莫笑」的意思是「請你不要嘲笑我」。"}
+    ]
+  },
+  {
+    id:5, title:"江雪", author:"唐・柳宗元",
+    poem:`<ruby>千<rt>ㄑㄧㄢ</rt></ruby><ruby>山<rt>ㄕㄢ</rt></ruby><ruby>鳥<rt>ㄋㄧㄠˇ</rt></ruby><ruby>飛<rt>ㄈㄟ</rt></ruby><ruby>絕<rt>ㄐㄩㄝˊ</rt></ruby>，<br><ruby>萬<rt>ㄨㄢˋ</rt></ruby><ruby>徑<rt>ㄐㄧㄥˋ</rt></ruby><ruby>人<rt>ㄖㄣˊ</rt></ruby><ruby>蹤<rt>ㄗㄨㄥ</rt></ruby><ruby>滅<rt>ㄇㄧㄝˋ</rt></ruby>。<br><ruby>孤<rt>ㄍㄨ</rt></ruby><ruby>舟<rt>ㄓㄡ</rt></ruby><ruby>蓑<rt>ㄙㄨㄛ</rt></ruby><ruby>笠<rt>ㄌㄧˋ</rt></ruby><ruby>翁<rt>ㄨㄥ</rt></ruby>，<br><ruby>獨<rt>ㄉㄨˊ</rt></ruby><ruby>釣<rt>ㄉㄧㄠˋ</rt></ruby><ruby>寒<rt>ㄏㄢˊ</rt></ruby><ruby>江<rt>ㄐㄧㄤ</rt></ruby><ruby>雪<rt>ㄒㄩㄝˇ</rt></ruby>。`,
+    body:`這首詩描繪出一幅冬日雪景。千座山上，鳥兒都飛走了，蹤影全無；萬條小路上，人的蹤跡也消失了。只有一艘孤獨的小船，船上戴著蓑衣斗笠的老翁，獨自在寒冷的江雪中垂釣。詩人以孤獨釣魚的老翁自比，表達在逆境中堅守自我、絕不妥協的精神。`,
+    vocab:[
+      {w:"孤舟",zy:"ㄍㄨ ㄓㄡ",type:"名詞",meaning:"孤獨的一艘小船",example:"江面上一艘孤舟獨自漂流，顯得十分寂寥。"},
+      {w:"蓑笠",zy:"ㄙㄨㄛ ㄌㄧˋ",type:"名詞",meaning:"蓑衣和斗笠，古代漁夫或農夫防雨的衣物和帽子",example:"老漁夫穿著蓑笠，不畏風雨地在江上垂釣。"},
+      {w:"妥協",zy:"ㄊㄨㄛˇ ㄒㄧㄝˊ",type:"動詞",meaning:"讓步、放棄原則以換取妥善解決",example:"面對不公平的對待，他選擇堅持，不肯妥協。"}
+    ],
+    quiz:[
+      {q:"詩中形容冬天的景象，哪項描述正確？",opts:["到處鳥鳴、人聲鼎沸","千山無鳥，萬徑無人","雪中百花盛開","河流結冰，魚兒跳躍"],ans:1,exp:"「千山鳥飛絕，萬徑人蹤滅」，千座山上無鳥、萬條路上無人。"},
+      {q:"詩中的老翁在做什麼？",opts:["在雪地裡散步","在橋上休息","獨自在寒江雪中釣魚","在船上睡覺"],ans:2,exp:"「獨釣寒江雪」，老翁獨自在寒冷的江雪中垂釣。"},
+      {q:"詩人以釣魚的老翁自比，想表達什麼精神？",opts:["喜歡安靜獨處的性格","在逆境中堅守自我、不妥協","對寒冬的喜愛","希望成為一名漁夫"],ans:1,exp:"詩人用孤獨釣魚的老翁，「表達在逆境中堅守自我、絕不妥協的精神」。"}
+    ]
+  },
+  {
+    id:6, title:"憫農（其一）", author:"唐・李紳",
+    poem:`<ruby>春<rt>ㄔㄨㄣ</rt></ruby><ruby>種<rt>ㄓㄨㄥˋ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>粒<rt>ㄌㄧˋ</rt></ruby><ruby>粟<rt>ㄙㄨˋ</rt></ruby>，<br><ruby>秋<rt>ㄑㄧㄡ</rt></ruby><ruby>收<rt>ㄕㄡ</rt></ruby><ruby>萬<rt>ㄨㄢˋ</rt></ruby><ruby>顆<rt>ㄎㄜ</rt></ruby><ruby>子<rt>ㄗ</rt></ruby>。<br><ruby>四<rt>ㄙˋ</rt></ruby><ruby>海<rt>ㄏㄞˇ</rt></ruby><ruby>無<rt>ㄨˊ</rt></ruby><ruby>閒<rt>ㄒㄧㄢˊ</rt></ruby><ruby>田<rt>ㄊㄧㄢˊ</rt></ruby>，<br><ruby>農<rt>ㄋㄨㄥˊ</rt></ruby><ruby>夫<rt>ㄈㄨ</rt></ruby><ruby>猶<rt>ㄧㄡˊ</rt></ruby><ruby>餓<rt>ㄜˋ</rt></ruby><ruby>死<rt>ㄙˇ</rt></ruby>。`,
+    body:`這首詩描寫農民的辛苦與社會的不公。春天播下一粒小米，秋天就能收穫萬顆。天下所有的田地都不休閒，農夫卻還是餓死。詩人以對比的方式，點出土地豐收、農人卻貧苦的不合理現象，表達對農民悲苦命運的同情與對社會不公的憤慨。`,
+    vocab:[
+      {w:"粟",zy:"ㄙㄨˋ",type:"名詞",meaning:"小米，一種古代常見的糧食作物",example:"古代農夫辛苦耕種，粟米是重要的糧食。"},
+      {w:"猶",zy:"ㄧㄡˊ",type:"副詞",meaning:"還是、仍然",example:"他努力了這麼久，猶未放棄，令人敬佩。"},
+      {w:"憤慨",zy:"ㄈㄣˋ ㄎㄞˋ",type:"形容詞/動詞",meaning:"因不公正的事情感到憤怒和不平",example:"看到弱勢者被欺負，他心中充滿憤慨。"}
+    ],
+    quiz:[
+      {q:"「春種一粒粟，秋收萬顆子」說明了什麼？",opts:["農業耕種很困難","土地的豐收，一粒種子能收穫萬顆","種米不如種粟","春天比秋天重要"],ans:1,exp:"這句說明「土地豐收，春天播一粒能秋天收穫萬顆」。"},
+      {q:"這首詩最令人感到矛盾、不公的是什麼？",opts:["農夫不努力耕種","天下田地豐收，農夫卻還是餓死","農夫喜歡休息不工作","種出來的糧食吃不完"],ans:1,exp:"「四海無閒田，農夫猶餓死」，土地豐收農夫卻餓死，這是最大的不公。"},
+      {q:"詩人寫這首詩的目的是？",opts:["讚美農夫的耕種技術","描寫春天的美麗景色","表達對農民辛苦與社會不公的同情與憤慨","鼓勵大家多種糧食"],ans:2,exp:"詩人「表達對農民悲苦命運的同情與對社會不公的憤慨」。"}
+    ]
+  },
+  {
+    id:7, title:"遊子吟", author:"唐・孟郊",
+    poem:`<ruby>慈<rt>ㄘˊ</rt></ruby><ruby>母<rt>ㄇㄨˇ</rt></ruby><ruby>手<rt>ㄕㄡˇ</rt></ruby><ruby>中<rt>ㄓㄨㄥ</rt></ruby><ruby>線<rt>ㄒㄧㄢˋ</rt></ruby>，<br><ruby>遊<rt>ㄧㄡˊ</rt></ruby><ruby>子<rt>ㄗ</rt></ruby><ruby>身<rt>ㄕㄣ</rt></ruby><ruby>上<rt>ㄕㄤˋ</rt></ruby><ruby>衣<rt>ㄧ</rt></ruby>。<br><ruby>臨<rt>ㄌㄧㄣˊ</rt></ruby><ruby>行<rt>ㄒㄧㄥˊ</rt></ruby><ruby>密<rt>ㄇㄧˋ</rt></ruby><ruby>密<rt>ㄇㄧˋ</rt></ruby><ruby>縫<rt>ㄈㄥˊ</rt></ruby>，<br><ruby>意<rt>ㄧˋ</rt></ruby><ruby>恐<rt>ㄎㄨㄥˇ</rt></ruby><ruby>遲<rt>ㄔˊ</rt></ruby><ruby>遲<rt>ㄔˊ</rt></ruby><ruby>歸<rt>ㄍㄨㄟ</rt></ruby>。<br><ruby>誰<rt>ㄕㄨㄟˊ</rt></ruby><ruby>言<rt>ㄧㄢˊ</rt></ruby><ruby>寸<rt>ㄘㄨㄣˋ</rt></ruby><ruby>草<rt>ㄘㄠˇ</rt></ruby><ruby>心<rt>ㄒㄧㄣ</rt></ruby>，<br><ruby>報<rt>ㄅㄠˋ</rt></ruby><ruby>得<rt>ㄉㄜˊ</rt></ruby><ruby>三<rt>ㄙㄢ</rt></ruby><ruby>春<rt>ㄔㄨㄣ</rt></ruby><ruby>暉<rt>ㄏㄨㄟ</rt></ruby>？`,
+    body:`這首詩歌頌母愛的偉大。慈愛的母親手中拿著針線，為即將遠行的孩子縫製衣服。出發前密密地縫著，擔心孩子遲遲無法回家。誰說小草的心意，能夠報答春天陽光的恩惠呢？最後兩句用小草比喻孩子，用春暉比喻母愛，感嘆母恩深重，子女難以回報，是歌頌母愛的千古名篇。`,
+    vocab:[
+      {w:"慈母",zy:"ㄘˊ ㄇㄨˇ",type:"名詞",meaning:"慈愛的母親",example:"慈母的愛是世界上最無私的情感。"},
+      {w:"寸草心",zy:"ㄘㄨㄣˋ ㄘㄠˇ ㄒㄧㄣ",type:"名詞片語",meaning:"比喻孩子對父母的一點點心意，極其微薄",example:"縱使有寸草心，也難以回報母親三春暉般的恩情。"},
+      {w:"三春暉",zy:"ㄙㄢ ㄔㄨㄣ ㄏㄨㄟ",type:"名詞片語",meaning:"三個月春天的陽光，比喻母親偉大溫暖的恩愛",example:"詩人用三春暉來比喻母親的愛，說明母恩難以回報。"}
+    ],
+    quiz:[
+      {q:"母親在孩子出發前做什麼？",opts:["準備豐盛的食物","密密地縫製衣服","唱歌為孩子送行","叮嚀孩子要早點回來"],ans:1,exp:"母親「臨行密密縫」，在孩子出發前密密地縫製衣服。"},
+      {q:"「意恐遲遲歸」是什麼意思？",opts:["母親希望孩子永遠不要回來","擔心孩子遲遲無法回家","孩子故意走得很慢","母親不想讓孩子出門"],ans:1,exp:"「意恐遲遲歸」是母親擔心孩子「遲遲無法回家」。"},
+      {q:"詩人用什麼比喻母親的愛？",opts:["大海","春天的陽光（三春暉）","高山","深夜的星星"],ans:1,exp:"詩人「用春暉比喻母愛」，感嘆母恩深重難以回報。"}
+    ]
+  },
+  {
+    id:8, title:"楓橋夜泊", author:"唐・張繼",
+    poem:`<ruby>月<rt>ㄩㄝˋ</rt></ruby><ruby>落<rt>ㄌㄨㄛˋ</rt></ruby><ruby>烏<rt>ㄨ</rt></ruby><ruby>啼<rt>ㄊㄧˊ</rt></ruby><ruby>霜<rt>ㄕㄨㄤ</rt></ruby><ruby>滿<rt>ㄇㄢˇ</rt></ruby><ruby>天<rt>ㄊㄧㄢ</rt></ruby>，<br><ruby>江<rt>ㄐㄧㄤ</rt></ruby><ruby>楓<rt>ㄈㄥ</rt></ruby><ruby>漁<rt>ㄩˊ</rt></ruby><ruby>火<rt>ㄏㄨㄛˇ</rt></ruby><ruby>對<rt>ㄉㄨㄟˋ</rt></ruby><ruby>愁<rt>ㄔㄡˊ</rt></ruby><ruby>眠<rt>ㄇㄧㄢˊ</rt></ruby>。<br><ruby>姑<rt>ㄍㄨ</rt></ruby><ruby>蘇<rt>ㄙㄨ</rt></ruby><ruby>城<rt>ㄔㄥˊ</rt></ruby><ruby>外<rt>ㄨㄞˋ</rt></ruby><ruby>寒<rt>ㄏㄢˊ</rt></ruby><ruby>山<rt>ㄕㄢ</rt></ruby><ruby>寺<rt>ㄙˋ</rt></ruby>，<br><ruby>夜<rt>ㄧㄝˋ</rt></ruby><ruby>半<rt>ㄅㄢˋ</rt></ruby><ruby>鐘<rt>ㄓㄨㄥ</rt></ruby><ruby>聲<rt>ㄕㄥ</rt></ruby><ruby>到<rt>ㄉㄠˋ</rt></ruby><ruby>客<rt>ㄎㄜˋ</rt></ruby><ruby>船<rt>ㄔㄨㄢˊ</rt></ruby>。`,
+    body:`這首詩描寫詩人夜晚停泊在楓橋旁的所見所聞。月亮西沉，烏鴉啼叫，霜氣瀰漫天空；江邊的楓樹和漁火，伴著憂愁難以入睡的詩人。姑蘇城外的寒山寺，夜半的鐘聲傳到了停泊的客船。全詩以聲音、景色交織，描繪出一幅孤寂悠遠的秋夜圖，令人回味無窮。`,
+    vocab:[
+      {w:"愁眠",zy:"ㄔㄡˊ ㄇㄧㄢˊ",type:"動詞片語",meaning:"因憂愁而睡不著，輾轉難眠",example:"思鄉的遊子在異鄉愁眠，久久無法入睡。"},
+      {w:"客船",zy:"ㄎㄜˋ ㄔㄨㄢˊ",type:"名詞",meaning:"旅客乘坐的船，暗示詩人是在外漂泊的旅人",example:"詩人乘坐客船，在夜晚停泊於楓橋旁。"},
+      {w:"回味",zy:"ㄏㄨㄟˊ ㄨㄟˋ",type:"動詞",meaning:"事後細細品味、回想其中的意味",example:"這首詩讀完後令人回味無窮，久久難忘。"}
+    ],
+    quiz:[
+      {q:"「江楓漁火對愁眠」中，「愁眠」是什麼意思？",opts:["睡得很香甜","因憂愁而睡不著","夢到令人憂愁的事","在船上睡覺"],ans:1,exp:"「愁眠」是「因憂愁而睡不著」。"},
+      {q:"詩中哪個寺廟的鐘聲在夜半傳到了客船？",opts:["靈隱寺","龍山寺","寒山寺","法隆寺"],ans:2,exp:"「姑蘇城外寒山寺，夜半鐘聲到客船」，是寒山寺的鐘聲。"},
+      {q:"這首詩整體呈現了什麼氣氛？",opts:["熱鬧歡快","孤寂悠遠","雄偉壯觀","輕鬆愉快"],ans:1,exp:"這首詩「描繪出一幅孤寂悠遠的秋夜圖，令人回味無窮」。"}
+    ]
+  },
+  {
+    id:9, title:"望廬山瀑布", author:"唐・李白",
+    poem:`<ruby>日<rt>ㄖˋ</rt></ruby><ruby>照<rt>ㄓㄠˋ</rt></ruby><ruby>香<rt>ㄒㄧㄤ</rt></ruby><ruby>爐<rt>ㄌㄨˊ</rt></ruby><ruby>生<rt>ㄕㄥ</rt></ruby><ruby>紫<rt>ㄗˇ</rt></ruby><ruby>煙<rt>ㄧㄢ</rt></ruby>，<br><ruby>遙<rt>ㄧㄠˊ</rt></ruby><ruby>看<rt>ㄎㄢˋ</rt></ruby><ruby>瀑<rt>ㄆㄨˋ</rt></ruby><ruby>布<rt>ㄅㄨˋ</rt></ruby><ruby>掛<rt>ㄍㄨㄚˋ</rt></ruby><ruby>前<rt>ㄑㄧㄢˊ</rt></ruby><ruby>川<rt>ㄔㄨㄢ</rt></ruby>。<br><ruby>飛<rt>ㄈㄟ</rt></ruby><ruby>流<rt>ㄌㄧㄡˊ</rt></ruby><ruby>直<rt>ㄓˊ</rt></ruby><ruby>下<rt>ㄒㄧㄚˋ</rt></ruby><ruby>三<rt>ㄙㄢ</rt></ruby><ruby>千<rt>ㄑㄧㄢ</rt></ruby><ruby>尺<rt>ㄔˇ</rt></ruby>，<br><ruby>疑<rt>ㄧˊ</rt></ruby><ruby>是<rt>ㄕˋ</rt></ruby><ruby>銀<rt>ㄧㄣˊ</rt></ruby><ruby>河<rt>ㄏㄜˊ</rt></ruby><ruby>落<rt>ㄌㄨㄛˋ</rt></ruby><ruby>九<rt>ㄐㄧㄡˇ</rt></ruby><ruby>天<rt>ㄊㄧㄢ</rt></ruby>。`,
+    body:`這首詩描寫廬山瀑布的壯觀景象。陽光照耀香爐峰，升起紫色的雲霧；遠遠望去，瀑布像一條白練掛在山前。飛流直衝而下，彷彿有三千尺長，讓人懷疑這是銀河從九天高空落下。詩人用誇張手法描寫廬山瀑布的雄奇氣勢，展現了李白豪放奔逸的詩風。`,
+    vocab:[
+      {w:"遙看",zy:"ㄧㄠˊ ㄎㄢˋ",type:"動詞",meaning:"從遠處望去、眺望",example:"站在山頂遙看遠方的城市，心胸頓時開闊。"},
+      {w:"誇張",zy:"ㄎㄨㄚ ㄓㄤ",type:"動詞/形容詞",meaning:"誇大描述，超過實際情況，是文學中常用的修辭方式",example:"詩人用誇張的手法寫「三千尺」，突顯瀑布的壯觀。"},
+      {w:"豪放",zy:"ㄏㄠˊ ㄈㄤˋ",type:"形容詞",meaning:"氣魄雄偉，性格開朗奔放，不拘小節",example:"李白的詩風豪放不羈，充滿想像力。"}
+    ],
+    quiz:[
+      {q:"詩人把瀑布比喻成什麼？",opts:["一條白色的絲帶","銀河從九天落下","一道閃電","一匹奔跑的白馬"],ans:1,exp:"「疑是銀河落九天」，詩人把瀑布比喻成銀河從天上落下。"},
+      {q:"「飛流直下三千尺」使用了什麼修辭方式？",opts:["比喻","擬人","誇張","對比"],ans:2,exp:"「三千尺」是誇張的說法，用來「突顯瀑布的壯觀氣勢」。"},
+      {q:"李白的詩風被描述為什麼樣的特色？",opts:["婉約細膩","悲傷沉鬱","豪放奔逸","平淡自然"],ans:2,exp:"這首詩「展現了李白豪放奔逸的詩風」。"}
+    ]
+  },
+  {
+    id:10, title:"相思", author:"唐・王維",
+    poem:`<ruby>紅<rt>ㄏㄨㄥˊ</rt></ruby><ruby>豆<rt>ㄉㄡˋ</rt></ruby><ruby>生<rt>ㄕㄥ</rt></ruby><ruby>南<rt>ㄋㄢˊ</rt></ruby><ruby>國<rt>ㄍㄨㄛˊ</rt></ruby>，<br><ruby>春<rt>ㄔㄨㄣ</rt></ruby><ruby>來<rt>ㄌㄞˊ</rt></ruby><ruby>發<rt>ㄈㄚ</rt></ruby><ruby>幾<rt>ㄐㄧˇ</rt></ruby><ruby>枝<rt>ㄓ</rt></ruby>？<br><ruby>願<rt>ㄩㄢˋ</rt></ruby><ruby>君<rt>ㄐㄩㄣ</rt></ruby><ruby>多<rt>ㄉㄨㄛ</rt></ruby><ruby>采<rt>ㄘㄞˇ</rt></ruby><ruby>擷<rt>ㄒㄧㄝˊ</rt></ruby>，<br><ruby>此<rt>ㄘˇ</rt></ruby><ruby>物<rt>ㄨˋ</rt></ruby><ruby>最<rt>ㄗㄨㄟˋ</rt></ruby><ruby>相<rt>ㄒㄧㄤ</rt></ruby><ruby>思<rt>ㄙ</rt></ruby>。`,
+    body:`這首詩以紅豆寄託思念之情。南方長出的紅豆，春天又會長出幾枝呢？希望你多多採摘這紅豆，因為它最能代表相思之情。紅豆又稱「相思豆」，詩人請朋友多採摘，藉由這充滿思念象徵的小豆子，傳達深深的思念與牽掛之情，溫婉動人。`,
+    vocab:[
+      {w:"采擷",zy:"ㄘㄞˇ ㄒㄧㄝˊ",type:"動詞",meaning:"採摘，摘取植物的果實或花朵",example:"她到山上采擷野花，帶回家插瓶欣賞。"},
+      {w:"相思",zy:"ㄒㄧㄤ ㄙ",type:"動詞/名詞",meaning:"互相思念，對遠方的人深深的思念",example:"紅豆被稱為相思豆，象徵著深深的思念。"},
+      {w:"溫婉",zy:"ㄨㄣ ㄨㄢˇ",type:"形容詞",meaning:"溫柔婉約，說話或表達方式輕柔而有情意",example:"她的說話方式溫婉動人，讓人感到親切。"}
+    ],
+    quiz:[
+      {q:"「紅豆」在這首詩中象徵什麼？",opts:["南方的美食","春天的到來","相思與思念","友誼與祝福"],ans:2,exp:"紅豆又稱「相思豆」，詩人用它「象徵相思與思念之情」。"},
+      {q:"詩人為什麼叫朋友多採摘紅豆？",opts:["因為紅豆很美味","因為紅豆最能代表相思之情","因為紅豆很稀少","因為紅豆顏色很美"],ans:1,exp:"「此物最相思」，詩人說紅豆「最能代表相思之情」，所以叫朋友多採摘。"},
+      {q:"「春來發幾枝」這句話表達了什麼情感？",opts:["對春天的期待","對紅豆數量的好奇","對思念之情濃淡的疑問","對南方氣候的好奇"],ans:1,exp:"「春來發幾枝」帶有對遠方朋友的牽掛，「含有相思情感的疑問」。"}
+    ]
+  },
+  {
+    id:11, title:"水調歌頭", author:"宋・蘇軾",
+    poem:`<ruby>明<rt>ㄇㄧㄥˊ</rt></ruby><ruby>月<rt>ㄩㄝˋ</rt></ruby><ruby>幾<rt>ㄐㄧˇ</rt></ruby><ruby>時<rt>ㄕˊ</rt></ruby><ruby>有<rt>ㄧㄡˇ</rt></ruby>？<br><ruby>把<rt>ㄅㄚˇ</rt></ruby><ruby>酒<rt>ㄐㄧㄡˇ</rt></ruby><ruby>問<rt>ㄨㄣˋ</rt></ruby><ruby>青<rt>ㄑㄧㄥ</rt></ruby><ruby>天<rt>ㄊㄧㄢ</rt></ruby>。<br>…<br><ruby>人<rt>ㄖㄣˊ</rt></ruby><ruby>有<rt>ㄧㄡˇ</rt></ruby><ruby>悲<rt>ㄅㄟ</rt></ruby><ruby>歡<rt>ㄏㄨㄢ</rt></ruby><ruby>離<rt>ㄌㄧˊ</rt></ruby><ruby>合<rt>ㄏㄜˊ</rt></ruby>，<br><ruby>月<rt>ㄩㄝˋ</rt></ruby><ruby>有<rt>ㄧㄡˇ</rt></ruby><ruby>陰<rt>ㄧㄣ</rt></ruby><ruby>晴<rt>ㄑㄧㄥˊ</rt></ruby><ruby>圓<rt>ㄩㄢˊ</rt></ruby><ruby>缺<rt>ㄑㄩㄝ</rt></ruby>。<br><ruby>但<rt>ㄉㄢˋ</rt></ruby><ruby>願<rt>ㄩㄢˋ</rt></ruby><ruby>人<rt>ㄖㄣˊ</rt></ruby><ruby>長<rt>ㄔㄤˊ</rt></ruby><ruby>久<rt>ㄐㄧㄡˇ</rt></ruby>，<br><ruby>千<rt>ㄑㄧㄢ</rt></ruby><ruby>里<rt>ㄌㄧˇ</rt></ruby><ruby>共<rt>ㄍㄨㄥˋ</rt></ruby><ruby>嬋<rt>ㄔㄢˊ</rt></ruby><ruby>娟<rt>ㄐㄩㄢ</rt></ruby>。`,
+    body:`這是北宋文學家蘇軾的名詞，中秋節對月思念弟弟蘇轍而作。詞中感嘆人生有悲歡離合，就像月亮有陰晴圓缺，這是自古以來難以兩全的事。最後兩句「但願人長久，千里共嬋娟」，表達只希望所愛的人都能平安健康，即使相隔千里，也能共同欣賞這一輪明月，是千古流傳的安慰與祝願。`,
+    vocab:[
+      {w:"悲歡離合",zy:"ㄅㄟ ㄏㄨㄢ ㄌㄧˊ ㄏㄜˊ",type:"成語",meaning:"人生中的悲傷、歡樂、分離、團聚，泛指人生的各種遭遇",example:"人生充滿悲歡離合，要學會坦然面對。"},
+      {w:"嬋娟",zy:"ㄔㄢˊ ㄐㄩㄢ",type:"名詞",meaning:"這裡指月亮，也形容月色的美麗姿態",example:"千里共嬋娟，說的是共同欣賞同一輪美麗的明月。"},
+      {w:"但願",zy:"ㄉㄢˋ ㄩㄢˋ",type:"副詞",meaning:"只希望、只期盼",example:"但願明天天氣晴朗，我們的旅行能順利進行。"}
+    ],
+    quiz:[
+      {q:"蘇軾寫這首詞是在思念誰？",opts:["父親","母親","弟弟蘇轍","好友"],ans:2,exp:"這首詞是「中秋節對月思念弟弟蘇轍而作」。"},
+      {q:"「人有悲歡離合，月有陰晴圓缺」這兩句表達什麼道理？",opts:["月亮比人生更重要","人生和月亮都有圓滿和缺憾，這是自然的","月亮圓的時候人最開心","悲傷比快樂更多"],ans:1,exp:"「人生和月亮都有圓滿和缺憾，這是自古難以兩全的事」。"},
+      {q:"「但願人長久，千里共嬋娟」表達了什麼願望？",opts:["希望月亮永遠都圓","希望弟弟早日回家","希望所愛的人平安，即使相隔千里也能共賞明月","希望自己能長生不老"],ans:2,exp:"「只希望所愛的人都能平安健康，即使相隔千里，也能共同欣賞這一輪明月」。"}
+    ]
+  },
+  {
+    id:12, title:"如夢令", author:"宋・李清照",
+    poem:`<ruby>常<rt>ㄔㄤˊ</rt></ruby><ruby>記<rt>ㄐㄧˋ</rt></ruby><ruby>溪<rt>ㄒㄧ</rt></ruby><ruby>亭<rt>ㄊㄧㄥˊ</rt></ruby><ruby>日<rt>ㄖˋ</rt></ruby><ruby>暮<rt>ㄇㄨˋ</rt></ruby>，<br><ruby>沉<rt>ㄔㄣˊ</rt></ruby><ruby>醉<rt>ㄗㄨㄟˋ</rt></ruby><ruby>不<rt>ㄅㄨˋ</rt></ruby><ruby>知<rt>ㄓ</rt></ruby><ruby>歸<rt>ㄍㄨㄟ</rt></ruby><ruby>路<rt>ㄌㄨˋ</rt></ruby>。<br><ruby>興<rt>ㄒㄧㄥˋ</rt></ruby><ruby>盡<rt>ㄐㄧㄣˋ</rt></ruby><ruby>晚<rt>ㄨㄢˇ</rt></ruby><ruby>回<rt>ㄏㄨㄟˊ</rt></ruby><ruby>舟<rt>ㄓㄡ</rt></ruby>，<br><ruby>誤<rt>ㄨˋ</rt></ruby><ruby>入<rt>ㄖㄨˋ</rt></ruby><ruby>藕<rt>ㄡˇ</rt></ruby><ruby>花<rt>ㄏㄨㄚ</rt></ruby><ruby>深<rt>ㄕㄣ</rt></ruby><ruby>處<rt>ㄔㄨˋ</rt></ruby>。<br><ruby>爭<rt>ㄓㄥ</rt></ruby><ruby>渡<rt>ㄉㄨˋ</rt></ruby>，<ruby>爭<rt>ㄓㄥ</rt></ruby><ruby>渡<rt>ㄉㄨˋ</rt></ruby>，<br><ruby>驚<rt>ㄐㄧㄥ</rt></ruby><ruby>起<rt>ㄑㄧˇ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>灘<rt>ㄊㄢ</rt></ruby><ruby>鷗<rt>ㄡ</rt></ruby><ruby>鷺<rt>ㄌㄨˋ</rt></ruby>。`,
+    body:`這首詞是宋代女詞人李清照回憶少女時代出遊的歡快情景。常常記得在溪亭傍晚遊玩，沉醉其中忘了回家的路。玩盡興了傍晚才划船回去，卻誤入了荷花叢深處。急著要划出去，卻驚動了岸邊一灘白鷺。全詞生動活潑，充滿少女的天真與對大自然的喜愛。`,
+    vocab:[
+      {w:"沉醉",zy:"ㄔㄣˊ ㄗㄨㄟˋ",type:"動詞",meaning:"深深陶醉在其中，完全投入忘記時間",example:"她沉醉在音樂中，渾然忘了時間的流逝。"},
+      {w:"藕花",zy:"ㄡˇ ㄏㄨㄚ",type:"名詞",meaning:"荷花，蓮花的別稱",example:"湖中盛開的藕花（荷花），清香迷人。"},
+      {w:"鷗鷺",zy:"ㄡ ㄌㄨˋ",type:"名詞",meaning:"鷗鳥和白鷺，是常見的水邊鳥類",example:"夕陽下，一群鷗鷺飛過江面，景色十分優美。"}
+    ],
+    quiz:[
+      {q:"詞人常常記得什麼事？",opts:["在溪亭傍晚遊玩，沉醉忘路","和朋友在山上賞月","划船去捕魚","在荷花叢中睡覺"],ans:0,exp:"「常記溪亭日暮，沉醉不知歸路」，詞人常記得在溪亭傍晚遊玩沉醉忘路。"},
+      {q:"詞人誤入了哪裡？",opts:["深山老林","藕花（荷花）深處","漁人的船塢","蘆葦叢"],ans:1,exp:"「誤入藕花深處」，詞人誤入了荷花叢的深處。"},
+      {q:"「爭渡，爭渡」中的「爭渡」是什麼意思？",opts:["比賽誰划得快","爭著先上岸","急著趕快划出去","和別人爭奪船隻"],ans:2,exp:"「爭渡」是「急著趕快划出去」的意思，表現出情況緊急。"}
+    ]
+  },
+  {
+    id:13, title:"題西林壁", author:"宋・蘇軾",
+    poem:`<ruby>橫<rt>ㄏㄥˊ</rt></ruby><ruby>看<rt>ㄎㄢˋ</rt></ruby><ruby>成<rt>ㄔㄥˊ</rt></ruby><ruby>嶺<rt>ㄌㄧㄥˇ</rt></ruby><ruby>側<rt>ㄘㄜˋ</rt></ruby><ruby>成<rt>ㄔㄥˊ</rt></ruby><ruby>峰<rt>ㄈㄥ</rt></ruby>，<br><ruby>遠<rt>ㄩㄢˇ</rt></ruby><ruby>近<rt>ㄐㄧㄣˋ</rt></ruby><ruby>高<rt>ㄍㄠ</rt></ruby><ruby>低<rt>ㄉㄧ</rt></ruby><ruby>各<rt>ㄍㄜˋ</rt></ruby><ruby>不<rt>ㄅㄨˋ</rt></ruby><ruby>同<rt>ㄊㄨㄥˊ</rt></ruby>。<br><ruby>不<rt>ㄅㄨˋ</rt></ruby><ruby>識<rt>ㄕˊ</rt></ruby><ruby>廬<rt>ㄌㄨˊ</rt></ruby><ruby>山<rt>ㄕㄢ</rt></ruby><ruby>真<rt>ㄓㄣ</rt></ruby><ruby>面<rt>ㄇㄧㄢˋ</rt></ruby><ruby>目<rt>ㄇㄨˋ</rt></ruby>，<br><ruby>只<rt>ㄓˇ</rt></ruby><ruby>緣<rt>ㄩㄢˊ</rt></ruby><ruby>身<rt>ㄕㄣ</rt></ruby><ruby>在<rt>ㄗㄞˋ</rt></ruby><ruby>此<rt>ㄘˇ</rt></ruby><ruby>山<rt>ㄕㄢ</rt></ruby><ruby>中<rt>ㄓㄨㄥ</rt></ruby>。`,
+    body:`這首詩描寫蘇軾遊廬山的感受，充滿哲理。從橫面看廬山是連綿的山嶺，從側面看是高聳的山峰，從遠、近、高、低各個角度看都不一樣。看不清廬山的真實面貌，只是因為自己身在山中。詩人以廬山比喻人生，說明當局者迷，旁觀者清，人在局中往往看不清全貌，需要跳出來才能客觀判斷。`,
+    vocab:[
+      {w:"面目",zy:"ㄇㄧㄢˋ ㄇㄨˋ",type:"名詞",meaning:"本來的面貌、真實的樣子",example:"這件事的真實面目，需要仔細調查才能看清楚。"},
+      {w:"當局者迷",zy:"ㄉㄤ ㄐㄩˊ ㄓㄜˇ ㄇㄧˊ",type:"成語",meaning:"身在其中的人往往因為太靠近而看不清楚事情的真相",example:"當局者迷，旁觀者清，有時候需要聽聽別人的意見。"},
+      {w:"客觀",zy:"ㄎㄜˋ ㄍㄨㄢ",type:"形容詞",meaning:"不帶個人感情偏見，公正地看待事物",example:"評論別人的作品，要盡量保持客觀的態度。"}
+    ],
+    quiz:[
+      {q:"為什麼從不同角度看廬山，感覺都不一樣？",opts:["廬山本來就沒有固定形狀","廬山太大，遠近高低角度不同所見也不同","詩人視力不好","廬山總在變化"],ans:1,exp:"「橫看成嶺側成峰，遠近高低各不同」，因為「角度不同，所見也就不同」。"},
+      {q:"「不識廬山真面目，只緣身在此山中」說明了什麼道理？",opts:["廬山太美，讓人看不清","身在其中反而看不清全貌，即當局者迷","廬山的霧氣太重","要看清山，必須更努力爬上去"],ans:1,exp:"說明「身在其中的人往往看不清全貌，需要跳出來才能客觀判斷」，即當局者迷。"},
+      {q:"這首詩是哪位詩人的作品？",opts:["李白","杜甫","蘇軾","王維"],ans:2,exp:"這首詩是「宋代文學家蘇軾」的作品。"}
+    ]
+  },
+  {
+    id:14, title:"示兒", author:"宋・陸游",
+    poem:`<ruby>死<rt>ㄙˇ</rt></ruby><ruby>去<rt>ㄑㄩˋ</rt></ruby><ruby>元<rt>ㄩㄢˊ</rt></ruby><ruby>知<rt>ㄓ</rt></ruby><ruby>萬<rt>ㄨㄢˋ</rt></ruby><ruby>事<rt>ㄕˋ</rt></ruby><ruby>空<rt>ㄎㄨㄥ</rt></ruby>，<br><ruby>但<rt>ㄉㄢˋ</rt></ruby><ruby>悲<rt>ㄅㄟ</rt></ruby><ruby>不<rt>ㄅㄨˋ</rt></ruby><ruby>見<rt>ㄐㄧㄢˋ</rt></ruby><ruby>九<rt>ㄐㄧㄡˇ</rt></ruby><ruby>州<rt>ㄓㄡ</rt></ruby><ruby>同<rt>ㄊㄨㄥˊ</rt></ruby>。<br><ruby>王<rt>ㄨㄤˊ</rt></ruby><ruby>師<rt>ㄕ</rt></ruby><ruby>北<rt>ㄅㄟˇ</rt></ruby><ruby>定<rt>ㄉㄧㄥˋ</rt></ruby><ruby>中<rt>ㄓㄨㄥ</rt></ruby><ruby>原<rt>ㄩㄢˊ</rt></ruby><ruby>日<rt>ㄖˋ</rt></ruby>，<br><ruby>家<rt>ㄐㄧㄚ</rt></ruby><ruby>祭<rt>ㄐㄧˋ</rt></ruby><ruby>無<rt>ㄨˊ</rt></ruby><ruby>忘<rt>ㄨㄤˋ</rt></ruby><ruby>告<rt>ㄍㄠˋ</rt></ruby><ruby>乃<rt>ㄋㄞˇ</rt></ruby><ruby>翁<rt>ㄨㄥ</rt></ruby>。`,
+    body:`這首詩是陸游臨終前寫給兒子的遺言。人死後本知萬事皆空，但最悲傷的是看不到祖國統一。當朝廷軍隊收復北方中原的那一天，在家祭祀時不要忘了告訴你們的父親。陸游終生念念不忘收復失地、統一國家，死前仍以此為念，展現了偉大的愛國情懷，令後世深受感動。`,
+    vocab:[
+      {w:"九州",zy:"ㄐㄧㄡˇ ㄓㄡ",type:"名詞",meaning:"古代中國的別稱，泛指整個中國大地",example:"詩人最大的心願是看到九州統一，國泰民安。"},
+      {w:"遺言",zy:"ㄧˊ ㄧㄢˊ",type:"名詞",meaning:"人在臨終前留下的話或囑咐",example:"他的遺言只有一句：「好好照顧家人。」"},
+      {w:"愛國情懷",zy:"ㄞˋ ㄍㄨㄛˊ ㄑㄧㄥˊ ㄏㄨㄞˊ",type:"名詞",meaning:"對自己國家深深的熱愛與關懷",example:"這首詩充分展現了陸游終生不渝的愛國情懷。"}
+    ],
+    quiz:[
+      {q:"陸游說自己雖然知道死後萬事皆空，但最悲傷的是什麼？",opts:["不能再見到家人","沒有留下更多詩作","看不見祖國統一","兒子不孝順"],ans:2,exp:"「但悲不見九州同」，陸游最悲傷的是「看不到祖國統一」。"},
+      {q:"「家祭無忘告乃翁」是什麼意思？",opts:["家祭時不要忘記邀請父親","家祭時不要忘記告訴你們的父親（收復中原的消息）","家祭時要記得準備豐盛供品","家祭時父親會親自主持"],ans:1,exp:"「家祭無忘告乃翁」是說「家祭時不要忘了把（收復中原的消息）告訴你們的父親」。"},
+      {q:"這首詩最能展現陸游哪方面的精神？",opts:["對子女的溺愛","對美食的熱愛","終生不渝的愛國情懷","對詩歌創作的熱忱"],ans:2,exp:"這首詩「展現了陸游終生不渝的愛國情懷，令後世深受感動」。"}
+    ]
+  },
+  {
+    id:15, title:"梅花", author:"宋・王安石",
+    poem:`<ruby>牆<rt>ㄑㄧㄤˊ</rt></ruby><ruby>角<rt>ㄐㄧㄠˇ</rt></ruby><ruby>數<rt>ㄕㄨˋ</rt></ruby><ruby>枝<rt>ㄓ</rt></ruby><ruby>梅<rt>ㄇㄟˊ</rt></ruby>，<br><ruby>凌<rt>ㄌㄧㄥˊ</rt></ruby><ruby>寒<rt>ㄏㄢˊ</rt></ruby><ruby>獨<rt>ㄉㄨˊ</rt></ruby><ruby>自<rt>ㄗˋ</rt></ruby><ruby>開<rt>ㄎㄞ</rt></ruby>。<br><ruby>遙<rt>ㄧㄠˊ</rt></ruby><ruby>知<rt>ㄓ</rt></ruby><ruby>不<rt>ㄅㄨˋ</rt></ruby><ruby>是<rt>ㄕˋ</rt></ruby><ruby>雪<rt>ㄒㄩㄝˇ</rt></ruby>，<br><ruby>為<rt>ㄨㄟˋ</rt></ruby><ruby>有<rt>ㄧㄡˇ</rt></ruby><ruby>暗<rt>ㄢˋ</rt></ruby><ruby>香<rt>ㄒㄧㄤ</rt></ruby><ruby>來<rt>ㄌㄞˊ</rt></ruby>。`,
+    body:`這首詩讚頌梅花在嚴冬中獨自盛開的高潔精神。牆角有幾枝梅花，迎著嚴寒獨自開放。從遠處就能知道那不是雪，是因為有梅花淡淡的清香飄來。詩人以梅花比喻堅貞不屈、不畏困難的品格，暗示自己雖身處逆境，仍堅持理想、散發光芒，是托物言志的名篇。`,
+    vocab:[
+      {w:"凌寒",zy:"ㄌㄧㄥˊ ㄏㄢˊ",type:"動詞",meaning:"迎著嚴寒，不畏懼寒冷",example:"梅花凌寒獨開，展現了不屈的精神。"},
+      {w:"暗香",zy:"ㄢˋ ㄒㄧㄤ",type:"名詞",meaning:"淡淡的隱約香氣，不濃烈但令人印象深刻",example:"夜裡窗外飄來梅花的暗香，清幽迷人。"},
+      {w:"托物言志",zy:"ㄊㄨㄛ ㄨˋ ㄧㄢˊ ㄓˋ",type:"成語",meaning:"借助某樣事物來表達自己的志向或情感",example:"這首詩以梅花托物言志，表達詩人不屈的精神。"}
+    ],
+    quiz:[
+      {q:"梅花在什麼條件下開放，令詩人讚嘆？",opts:["在春天陽光充足時","在溫暖的室內花圃","迎著嚴寒獨自開放","得到許多人細心照料後"],ans:2,exp:"「凌寒獨自開」，梅花「迎著嚴寒獨自開放」，展現高潔精神。"},
+      {q:"詩人從遠處怎麼知道那不是雪？",opts:["顏色不一樣","因為有梅花淡淡的清香飄來","形狀不一樣","雪不會長在牆角"],ans:1,exp:"「為有暗香來」，詩人「因為聞到梅花淡淡的清香，才知道那不是雪」。"},
+      {q:"這首詩用了什麼寫作手法？",opts:["誇張","倒敘","托物言志","擬人"],ans:2,exp:"這首詩「以梅花托物言志，表達詩人不畏逆境、堅持理想的精神」。"}
+    ]
+  },
+  {
+    id:16, title:"早發白帝城", author:"唐・李白",
+    poem:`<ruby>朝<rt>ㄓㄠ</rt></ruby><ruby>辭<rt>ㄘˊ</rt></ruby><ruby>白<rt>ㄅㄞˊ</rt></ruby><ruby>帝<rt>ㄉㄧˋ</rt></ruby><ruby>彩<rt>ㄘㄞˇ</rt></ruby><ruby>雲<rt>ㄩㄣˊ</rt></ruby><ruby>間<rt>ㄐㄧㄢ</rt></ruby>，<br><ruby>千<rt>ㄑㄧㄢ</rt></ruby><ruby>里<rt>ㄌㄧˇ</rt></ruby><ruby>江<rt>ㄐㄧㄤ</rt></ruby><ruby>陵<rt>ㄌㄧㄥˊ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>日<rt>ㄖˋ</rt></ruby><ruby>還<rt>ㄏㄨㄢˊ</rt></ruby>。<br><ruby>兩<rt>ㄌㄧㄤˇ</rt></ruby><ruby>岸<rt>ㄢˋ</rt></ruby><ruby>猿<rt>ㄩㄢˊ</rt></ruby><ruby>聲<rt>ㄕㄥ</rt></ruby><ruby>啼<rt>ㄊㄧˊ</rt></ruby><ruby>不<rt>ㄅㄨˋ</rt></ruby><ruby>住<rt>ㄓㄨˋ</rt></ruby>，<br><ruby>輕<rt>ㄑㄧㄥ</rt></ruby><ruby>舟<rt>ㄓㄡ</rt></ruby><ruby>已<rt>ㄧˇ</rt></ruby><ruby>過<rt>ㄍㄨㄛˋ</rt></ruby><ruby>萬<rt>ㄨㄢˋ</rt></ruby><ruby>重<rt>ㄔㄨㄥˊ</rt></ruby><ruby>山<rt>ㄕㄢ</rt></ruby>。`,
+    body:`這首詩是李白獲得赦免後，喜悅地離開白帝城順流而下的心情寫照。清晨告別彩雲中的白帝城，千里之外的江陵一天之內就能到達。兩岸猿猴的啼聲不斷，輕快的小船已經越過了萬重山。全詩表達了詩人獲赦後輕鬆愉快、歸心似箭的喜悅心情，速度感十足。`,
+    vocab:[
+      {w:"朝辭",zy:"ㄓㄠ ㄘˊ",type:"動詞",meaning:"清晨告別、早上離開",example:"他朝辭家門，踏上長途旅程。"},
+      {w:"歸心似箭",zy:"ㄍㄨㄟ ㄒㄧㄣ ㄙˋ ㄐㄧㄢˋ",type:"成語",meaning:"想回家的心情像箭一樣急切，形容急切想要返回",example:"在外工作許久，他歸心似箭，迫不及待想回家。"},
+      {w:"赦免",zy:"ㄕㄜˋ ㄇㄧㄢˇ",type:"動詞",meaning:"免除罪責，被官府放過不再追究",example:"李白獲得皇帝赦免，終於能離開流放地回家。"}
+    ],
+    quiz:[
+      {q:"詩人從白帝城到江陵要花多久時間？",opts:["七天七夜","一個月","一天之內","三天"],ans:2,exp:"「千里江陵一日還」，詩人說千里之外的江陵「一天之內就能到達」。"},
+      {q:"「輕舟已過萬重山」表達了什麼感覺？",opts:["船很輕，差點沉了","旅程危險，驚險萬分","速度極快，船已越過重重山嶺","山太多，走不出去"],ans:2,exp:"這句表達「速度極快，船已輕鬆越過重重山嶺」，充滿歸途的喜悅。"},
+      {q:"李白寫這首詩時是什麼心情？",opts:["悲傷難過","思念故鄉","獲赦後輕鬆愉快、歸心似箭","憤恨不平"],ans:2,exp:"「全詩表達了詩人獲赦後輕鬆愉快、歸心似箭的喜悅心情」。"}
+    ]
+  },
+  {
+    id:17, title:"春日", author:"宋・朱熹",
+    poem:`<ruby>勝<rt>ㄕㄥˋ</rt></ruby><ruby>日<rt>ㄖˋ</rt></ruby><ruby>尋<rt>ㄒㄩㄣˊ</rt></ruby><ruby>芳<rt>ㄈㄤ</rt></ruby><ruby>泗<rt>ㄙˋ</rt></ruby><ruby>水<rt>ㄕㄨㄟˇ</rt></ruby><ruby>濱<rt>ㄅㄧㄣ</rt></ruby>，<br><ruby>無<rt>ㄨˊ</rt></ruby><ruby>邊<rt>ㄅㄧㄢ</rt></ruby><ruby>光<rt>ㄍㄨㄤ</rt></ruby><ruby>景<rt>ㄐㄧㄥˇ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>時<rt>ㄕˊ</rt></ruby><ruby>新<rt>ㄒㄧㄣ</rt></ruby>。<br><ruby>等<rt>ㄉㄥˇ</rt></ruby><ruby>閒<rt>ㄒㄧㄢˊ</rt></ruby><ruby>識<rt>ㄕˊ</rt></ruby><ruby>得<rt>ㄉㄜˊ</rt></ruby><ruby>東<rt>ㄉㄨㄥ</rt></ruby><ruby>風<rt>ㄈㄥ</rt></ruby><ruby>面<rt>ㄇㄧㄢˋ</rt></ruby>，<br><ruby>萬<rt>ㄨㄢˋ</rt></ruby><ruby>紫<rt>ㄗˇ</rt></ruby><ruby>千<rt>ㄑㄧㄢ</rt></ruby><ruby>紅<rt>ㄏㄨㄥˊ</rt></ruby><ruby>總<rt>ㄗㄨㄥˇ</rt></ruby><ruby>是<rt>ㄕˋ</rt></ruby><ruby>春<rt>ㄔㄨㄣ</rt></ruby>。`,
+    body:`這首詩描寫春日踏青的美麗景色。在晴好的日子裡到泗水河邊尋訪春景，眼前無邊的風景頓時一片嶄新。輕易就能認識春風的面貌，那萬紫千紅的一切，都是春天的美景。「萬紫千紅總是春」已成為描寫春天百花盛開、生機勃勃的千古名句，充滿對春天蓬勃生機的讚美。`,
+    vocab:[
+      {w:"尋芳",zy:"ㄒㄩㄣˊ ㄈㄤ",type:"動詞",meaning:"尋找春天的花草美景，踏青賞花",example:"春天來了，人們紛紛出門尋芳，享受大自然。"},
+      {w:"等閒",zy:"ㄉㄥˇ ㄒㄧㄢˊ",type:"副詞",meaning:"輕易地、隨便地，不費力就能",example:"他等閒就解決了這道難題，讓大家十分佩服。"},
+      {w:"萬紫千紅",zy:"ㄨㄢˋ ㄗˇ ㄑㄧㄢ ㄏㄨㄥˊ",type:"成語",meaning:"形容百花盛開，顏色繁多鮮豔，生機蓬勃",example:"春天公園裡萬紫千紅，美不勝收。"}
+    ],
+    quiz:[
+      {q:"詩人在哪裡尋找春天的景色？",opts:["廬山山頂","楓橋旁邊","泗水河邊","長江江畔"],ans:2,exp:"「勝日尋芳泗水濱」，詩人在「泗水河邊」尋訪春景。"},
+      {q:"「萬紫千紅總是春」形容什麼景象？",opts:["秋天楓葉的紅","冬天梅花的白","春天百花盛開，顏色繁多鮮豔","夏天荷花的粉"],ans:2,exp:"「萬紫千紅總是春」是形容「春天百花盛開，顏色繁多鮮豔」。"},
+      {q:"「等閒識得東風面」的「等閒」是什麼意思？",opts:["等一段時間","輕易地，不費力就能","忘記","偶爾"],ans:1,exp:"「等閒」是「輕易地、不費力就能」的意思。"}
+    ]
+  },
+  {
+    id:18, title:"泊船瓜洲", author:"宋・王安石",
+    poem:`<ruby>京<rt>ㄐㄧㄥ</rt></ruby><ruby>口<rt>ㄎㄡˇ</rt></ruby><ruby>瓜<rt>ㄍㄨㄚ</rt></ruby><ruby>洲<rt>ㄓㄡ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>水<rt>ㄕㄨㄟˇ</rt></ruby><ruby>間<rt>ㄐㄧㄢ</rt></ruby>，<br><ruby>鐘<rt>ㄓㄨㄥ</rt></ruby><ruby>山<rt>ㄕㄢ</rt></ruby><ruby>只<rt>ㄓˇ</rt></ruby><ruby>隔<rt>ㄍㄜˊ</rt></ruby><ruby>數<rt>ㄕㄨˋ</rt></ruby><ruby>重<rt>ㄔㄨㄥˊ</rt></ruby><ruby>山<rt>ㄕㄢ</rt></ruby>。<br><ruby>春<rt>ㄔㄨㄣ</rt></ruby><ruby>風<rt>ㄈㄥ</rt></ruby><ruby>又<rt>ㄧㄡˋ</rt></ruby><ruby>綠<rt>ㄌㄩˋ</rt></ruby><ruby>江<rt>ㄐㄧㄤ</rt></ruby><ruby>南<rt>ㄋㄢˊ</rt></ruby>，<br><ruby>明<rt>ㄇㄧㄥˊ</rt></ruby><ruby>月<rt>ㄩㄝˋ</rt></ruby><ruby>何<rt>ㄏㄜˊ</rt></ruby><ruby>時<rt>ㄕˊ</rt></ruby><ruby>照<rt>ㄓㄠˋ</rt></ruby><ruby>我<rt>ㄨㄛˇ</rt></ruby><ruby>還<rt>ㄏㄨㄢˊ</rt></ruby>？`,
+    body:`這首詩表達詩人對家鄉的思念。京口和瓜洲只隔著一條江，鐘山（家鄉）也只隔幾座山。春風又一次把江南大地染綠，明月啊，你什麼時候才能照著我回家呢？「春風又綠江南岸」中的「綠」字用得極為精妙，以顏色作動詞，生動描繪春天的生機，是古典詩詞中煉字的典範。`,
+    vocab:[
+      {w:"煉字",zy:"ㄌㄧㄢˋ ㄗˋ",type:"動詞",meaning:"詩人反覆推敲，選用最精準、最有表現力的字",example:"王安石為了找到「綠」字，前後改了十多次，是煉字的典範。"},
+      {w:"典範",zy:"ㄉㄧㄢˇ ㄈㄢˋ",type:"名詞",meaning:"值得仿效的模範、榜樣",example:"這首詩在煉字方面是古典詩詞的典範。"},
+      {w:"精妙",zy:"ㄐㄧㄥ ㄇㄧㄠˋ",type:"形容詞",meaning:"精細巧妙，非常高明出色",example:"這個比喻用得精妙，讓整首詩頓時生動起來。"}
+    ],
+    quiz:[
+      {q:"「春風又綠江南岸」中，「綠」字有什麼特別之處？",opts:["形容春天的顏色很深","把顏色當作動詞用，生動描繪春天的生機","說明江南的樹木很多","指春風是綠色的"],ans:1,exp:"「綠」字「以顏色作動詞，生動描繪春天的生機」，是煉字的典範。"},
+      {q:"詩人最後一句問的是什麼？",opts:["春天什麼時候來","江水什麼時候停流","明月什麼時候照著我回家","鐘山什麼時候能看見"],ans:2,exp:"「明月何時照我還」，詩人問「明月什麼時候才能照著我回家」。"},
+      {q:"王安石在「煉字」方面的努力體現在哪個字上？",opts:["春","風","又","綠"],ans:3,exp:"「『綠』字被反覆推敲，是古典詩詞中煉字的典範」。"}
+    ]
+  },
+  {
+    id:19, title:"秋夕", author:"唐・杜牧",
+    poem:`<ruby>銀<rt>ㄧㄣˊ</rt></ruby><ruby>燭<rt>ㄓㄨˊ</rt></ruby><ruby>秋<rt>ㄑㄧㄡ</rt></ruby><ruby>光<rt>ㄍㄨㄤ</rt></ruby><ruby>冷<rt>ㄌㄥˇ</rt></ruby><ruby>畫<rt>ㄏㄨㄚˋ</rt></ruby><ruby>屏<rt>ㄆㄧㄥˊ</rt></ruby>，<br><ruby>輕<rt>ㄑㄧㄥ</rt></ruby><ruby>羅<rt>ㄌㄨㄛˊ</rt></ruby><ruby>小<rt>ㄒㄧㄠˇ</rt></ruby><ruby>扇<rt>ㄕㄢˋ</rt></ruby><ruby>撲<rt>ㄆㄨ</rt></ruby><ruby>流<rt>ㄌㄧㄡˊ</rt></ruby><ruby>螢<rt>ㄧㄥˊ</rt></ruby>。<br><ruby>天<rt>ㄊㄧㄢ</rt></ruby><ruby>階<rt>ㄐㄧㄝ</rt></ruby><ruby>夜<rt>ㄧㄝˋ</rt></ruby><ruby>色<rt>ㄙㄜˋ</rt></ruby><ruby>涼<rt>ㄌㄧㄤˊ</rt></ruby><ruby>如<rt>ㄖㄨˊ</rt></ruby><ruby>水<rt>ㄕㄨㄟˇ</rt></ruby>，<br><ruby>坐<rt>ㄗㄨㄛˋ</rt></ruby><ruby>看<rt>ㄎㄢˋ</rt></ruby><ruby>牽<rt>ㄑㄧㄢ</rt></ruby><ruby>牛<rt>ㄋㄧㄡˊ</rt></ruby><ruby>織<rt>ㄓ</rt></ruby><ruby>女<rt>ㄋㄩˇ</rt></ruby><ruby>星<rt>ㄒㄧㄥ</rt></ruby>。`,
+    body:`這首詩描寫一位宮中女子七夕夜晚的孤寂生活。銀燭的秋光照著冰冷的畫屏，她拿著輕薄的羅扇輕輕撲打螢火蟲。殿前的夜色涼得像水一樣，她只能坐著仰望牽牛星與織女星。詩人以景物描寫映托內心的孤寂，雖未直寫悲傷，但寂寞之情卻深深透出，是以景托情的佳作。`,
+    vocab:[
+      {w:"流螢",zy:"ㄌㄧㄡˊ ㄧㄥˊ",type:"名詞",meaning:"飛舞的螢火蟲",example:"夏夜的田野裡，流螢點點，如夢似幻。"},
+      {w:"以景托情",zy:"ㄧˇ ㄐㄧㄥˇ ㄊㄨㄛ ㄑㄧㄥˊ",type:"成語",meaning:"藉由景物描寫來烘托、表達內心的情感",example:"詩人以秋夜的寒涼景色托出內心的寂寞，是以景托情的好手法。"},
+      {w:"孤寂",zy:"ㄍㄨ ㄐㄧˋ",type:"形容詞",meaning:"孤獨而寂寞，沒有人陪伴的落寞感",example:"她一個人坐在空蕩蕩的房間裡，感到無比孤寂。"}
+    ],
+    quiz:[
+      {q:"詩中女子用什麼撲打螢火蟲？",opts:["手帕","輕薄的羅扇","柳枝","衣袖"],ans:1,exp:"「輕羅小扇撲流螢」，她用「輕薄的羅扇」撲打螢火蟲。"},
+      {q:"「天階夜色涼如水」這句話傳達了什麼感受？",opts:["夜晚很熱，讓人流汗","秋夜寒涼，映托出內心的孤寂","夜晚下了一場小雨","天氣很舒適，令人心情愉快"],ans:1,exp:"夜色涼如水，「映托出詩中女子內心的孤寂」。"},
+      {q:"這首詩使用了什麼寫作手法？",opts:["直接表達悲傷","誇張描寫","以景托情","托物言志"],ans:2,exp:"「詩人以景物描寫映托內心的孤寂，是以景托情的佳作」。"}
+    ]
+  },
+  {
+    id:20, title:"唐詩宋詞的魅力", author:"導讀文章",
+    poem:``,
+    body:`唐詩宋詞是中華文化最璀璨的文學瑰寶。唐詩以精練的語言、嚴謹的格律，在極短的篇幅中傳達深刻的情感與哲理；宋詞則以更靈活的形式，描繪人間悲歡、山川景色與內心世界。這些詩詞跨越千年，至今仍深深打動人心，是因為它們描寫的情感——思鄉、友情、愛國、對自然的讚嘆——都是人類共同的感受。閱讀唐詩宋詞，不只是學習文學，更是與古人進行一場穿越時空的心靈對話。`,
+    vocab:[
+      {w:"瑰寶",zy:"ㄍㄨㄟ ㄅㄠˇ",type:"名詞",meaning:"非常珍貴美麗的寶貝，多用來形容珍貴的文化或藝術",example:"唐詩宋詞是中華文化的瑰寶，值得永遠珍藏。"},
+      {w:"格律",zy:"ㄍㄜˊ ㄌㄩˋ",type:"名詞",meaning:"詩詞在字數、押韻、平仄方面的固定規則",example:"律詩有嚴格的格律規定，每首詩的格式都是固定的。"},
+      {w:"心靈對話",zy:"ㄒㄧㄣ ㄌㄧㄥˊ ㄉㄨㄟˋ ㄏㄨㄚˋ",type:"名詞",meaning:"心靈層面的溝通與共鳴，超越語言和時間的感通",example:"閱讀詩詞就像與古人進行一場心靈對話，感受他們的喜怒哀樂。"}
+    ],
+    quiz:[
+      {q:"文章說唐詩的特色是什麼？",opts:["形式靈活，長度不限","以精練語言與嚴謹格律，在短篇幅中傳達深刻情感","以圖畫輔助表達情感","專門描寫自然風景"],ans:1,exp:"「唐詩以精練的語言、嚴謹的格律，在極短的篇幅中傳達深刻的情感與哲理」。"},
+      {q:"這些詩詞為什麼能跨越千年仍打動人心？",opts:["因為格律非常複雜","因為文字非常華麗","因為描寫的情感是人類共同的感受","因為都是皇帝喜歡的作品"],ans:2,exp:"「因為它們描寫的情感——思鄉、友情、愛國等——都是人類共同的感受」。"},
+      {q:"閱讀唐詩宋詞，除了學習文學，還能做什麼？",opts:["學習書法","了解古代的政治制度","與古人進行一場穿越時空的心靈對話","練習背誦的能力"],ans:2,exp:"「閱讀唐詩宋詞，更是與古人進行一場穿越時空的心靈對話」。"}
+    ]
+  }
+];
+
+let doneSets = {};
+let quizAnswered = {};
+
+function loadProgress() {
+  ARTICLES.forEach(a => {
+    const val = localStorage.getItem('uNdone_u10_' + a.id);
+    doneSets[a.id] = (val === 'done');
+  });
+}
+function saveProgress(id) {
+  localStorage.setItem('uNdone_u10_' + id, 'done');
+  doneSets[id] = true;
+}
+function updateProgress() {
+  const done = Object.values(doneSets).filter(Boolean).length;
+  document.getElementById('doneCount').textContent = done;
+  document.getElementById('progressFill').style.width = (done / 20 * 100) + '%';
+}
+function renderList() {
+  const grid = document.getElementById('articleGrid');
+  grid.innerHTML = '';
+  ARTICLES.forEach(a => {
+    const isDone = doneSets[a.id];
+    const card = document.createElement('div');
+    card.className = 'listCard ' + (isDone ? 'done' : 'undone');
+    card.innerHTML = `<div class="num">第 ${a.id} 篇</div><div class="title">${a.title}</div><span class="badge">${isDone ? '✓ 完成' : '待讀'}</span>`;
+    card.onclick = () => showArticle(a.id);
+    grid.appendChild(card);
+  });
+}
+function showList() {
+  document.getElementById('listView').style.display = 'block';
+  document.getElementById('readerView').style.display = 'none';
+  renderList(); updateProgress();
+}
+function showArticle(id) {
+  quizAnswered = {};
+  const a = ARTICLES.find(x => x.id === id);
+  document.getElementById('listView').style.display = 'none';
+  document.getElementById('readerView').style.display = 'block';
+  const poemSection = a.poem ? `<div class="poemBox">${a.poem}</div>` : '';
+  let html = `
+    <div class="readerCard">
+      <div class="articleTitle">📖 ${a.title}</div>
+      ${a.author ? `<div class="articleAuthor">── ${a.author} ──</div>` : ''}
+      ${poemSection}
+      <div class="articleBody">${a.body}</div>
+      <div class="vocabSection">
+        <div class="vocabTitle">📝 詞語學習</div>
+        ${a.vocab.map(v=>`<div class="vocabCard"><div><span class="vocabWord">${v.w}</span><span class="vocabType">${v.type}</span></div><div class="vocabZy">${v.zy}</div><div class="vocabMeaning">${v.meaning}</div><div class="vocabExample">例：${v.example}</div></div>`).join('')}
+      </div>
+    </div>
+    <div class="readerCard quizSection">
+      <div class="quizTitle">🧠 閱讀測驗</div>
+      ${a.quiz.map((q,qi)=>`
+        <div class="quizCard" id="qcard_${id}_${qi}">
+          <div class="quizQ">${qi+1}. ${q.q}</div>
+          <div class="quizOpts">
+            ${q.opts.map((opt,oi)=>`<button class="optBtn" onclick="answerQ(${id},${qi},${oi})" id="opt_${id}_${qi}_${oi}">${'ABCD'[oi]}. ${opt}</button>`).join('')}
+          </div>
+          <div class="explanation" id="exp_${id}_${qi}">💡 ${q.exp}</div>
+        </div>`).join('')}
+    </div>
+    <div class="completionBanner" id="banner_${id}">
+      <span class="big">${id === 20 ? '🎊' : '🎉'}</span>
+      ${id === 20 ? '恭喜旻翰完成全部20篇！<br>十個單元全部挑戰成功！太厲害了！🏆' : `恭喜旻翰完成第 ${id} 篇！繼續加油！`}
+    </div>`;
+  document.getElementById('articleContent').innerHTML = html;
+  window.scrollTo(0, 0);
+}
+function answerQ(artId, qi, oi) {
+  if (quizAnswered[qi]) return;
+  quizAnswered[qi] = true;
+  const a = ARTICLES.find(x => x.id === artId);
+  const correct = a.quiz[qi].ans;
+  const opts = document.querySelectorAll(`#qcard_${artId}_${qi} .optBtn`);
+  opts.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === correct) btn.classList.add('correct');
+    else if (i === oi) btn.classList.add('wrong');
+  });
+  document.getElementById(`exp_${artId}_${qi}`).style.display = 'block';
+  const allAnswered = a.quiz.every((_,i) => quizAnswered[i]);
+  if (allAnswered) {
+    document.getElementById(`banner_${artId}`).style.display = 'block';
+    saveProgress(artId); updateProgress();
+    setTimeout(() => { document.getElementById(`banner_${artId}`).scrollIntoView({behavior:'smooth'}); }, 200);
+  }
+}
+loadProgress(); renderList(); updateProgress();
+</script>
+</body>
+</html>
