@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>旻翰閱讀小教室</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap');
+
+  :root {
+    --bg: #060C1A;
+    --panel: rgba(10,22,45,0.85);
+    --border: rgba(255,255,255,0.08);
+    --glow: #00D4FF;
+    --glow2: #7B2FFF;
+    --text: #D4EEFF;
+    --muted: #4A7FA5;
+    --radius: 18px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans TC', '微軟正黑體', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* grid bg */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.035) 1px, transparent 1px);
+    background-size: 44px 44px;
+    pointer-events: none;
+  }
+
+  .wrap { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; padding: 0 16px 70px; }
+
+  /* ══ HEADER ══ */
+  header {
+    text-align: center;
+    padding: 40px 20px 30px;
+    position: relative;
+  }
+
+  /* corner brackets */
+  .brk {
+    position: absolute; width: 22px; height: 22px;
+    border-color: rgba(0,212,255,0.45); border-style: solid;
+  }
+  .brk-tl { top: 32px; left: 16px; border-width: 2px 0 0 2px; }
+  .brk-tr { top: 32px; right: 16px; border-width: 2px 2px 0 0; }
+  .brk-bl { bottom: 18px; left: 16px; border-width: 0 0 2px 2px; }
+  .brk-br { bottom: 18px; right: 16px; border-width: 0 2px 2px 0; }
+
+  .sys-tag {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.6rem; letter-spacing: 5px;
+    color: rgba(0,212,255,0.55); margin-bottom: 18px;
+  }
+
+  /* ── MASCOT ── */
+  .mascot {
+    display: inline-block; position: relative; margin-bottom: 14px;
+  }
+  .mascot svg {
+    width: 100px; height: 100px;
+    filter: drop-shadow(0 0 16px rgba(0,212,255,0.45));
+    animation: bob 3.8s ease-in-out infinite;
+  }
+  @keyframes bob {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-9px); }
+  }
+  .star-l, .star-r {
+    position: absolute; font-size: 0.75rem;
+    animation: twink 2.2s ease-in-out infinite;
+  }
+  .star-l { top: 6px; left: -14px; color: #FFD700; }
+  .star-r { bottom: 10px; right: -14px; color: var(--glow); animation-delay: 0.9s; }
+  @keyframes twink {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.15; transform: scale(0.65); }
+  }
+
+  .h-title {
+    font-size: 1.95rem; font-weight: 900; color: #fff;
+    letter-spacing: 4px;
+    text-shadow: 0 0 24px rgba(0,212,255,0.45);
+  }
+  .h-sub { font-size: 0.82rem; color: var(--muted); margin-top: 8px; letter-spacing: 2px; }
+  .h-badge {
+    display: inline-block; margin-top: 14px;
+    border: 1px solid rgba(0,212,255,0.4); color: var(--glow);
+    border-radius: 99px; padding: 5px 22px;
+    font-size: 0.72rem; letter-spacing: 3px;
+    background: rgba(0,212,255,0.05);
+    box-shadow: 0 0 14px rgba(0,212,255,0.1);
+    font-family: 'Orbitron', monospace;
+  }
+
+  /* ══ TOTAL PANEL ══ */
+  .total {
+    background: rgba(10,22,45,0.7);
+    border: 1px solid rgba(0,212,255,0.12);
+    border-radius: var(--radius); padding: 18px 20px;
+    margin-bottom: 26px;
+    display: flex; align-items: center; gap: 18px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 0 24px rgba(0,212,255,0.04);
+    position: relative; overflow: hidden;
+  }
+  .total::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    background: linear-gradient(180deg, var(--glow), var(--glow2));
+    border-radius: 99px;
+  }
+  .total-lbl { font-size: 0.6rem; letter-spacing: 4px; color: var(--muted); font-family: 'Orbitron', monospace; }
+  .total-num {
+    font-size: 1.55rem; font-weight: 900; color: var(--glow);
+    font-family: 'Orbitron', monospace;
+    text-shadow: 0 0 14px rgba(0,212,255,0.5); margin-top: 3px;
+  }
+  .total-right { flex: 1; }
+  .t-bar { background: rgba(255,255,255,0.05); border-radius: 99px; height: 7px; overflow: hidden; margin-top: 10px; border: 1px solid rgba(255,255,255,0.06); }
+  .t-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--glow), var(--glow2)); box-shadow: 0 0 8px var(--glow); transition: width 0.8s ease; }
+  .t-pct { font-size: 0.65rem; color: var(--muted); margin-top: 5px; font-family: 'Orbitron', monospace; }
+
+  /* ══ SECTION LABEL ══ */
+  .sec-lbl {
+    font-size: 0.6rem; letter-spacing: 5px; color: var(--muted);
+    font-family: 'Orbitron', monospace;
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 14px;
+  }
+  .sec-lbl::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(0,212,255,0.2), transparent); }
+
+  /* ══ UNIT GRID ══ */
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 13px; }
+
+  /* GLASSMORPHISM CARD */
+  .card {
+    border-radius: var(--radius);
+    padding: 18px 16px 14px;
+    text-decoration: none; display: block;
+    position: relative; overflow: hidden;
+    transition: transform 0.22s, box-shadow 0.22s;
+    /* glass base */
+    background: linear-gradient(135deg,
+      color-mix(in srgb, var(--cc) 22%, rgba(6,12,26,0.6)),
+      color-mix(in srgb, var(--cc) 8%, rgba(6,12,26,0.8))
+    );
+    border: 1px solid color-mix(in srgb, var(--cc) 30%, rgba(255,255,255,0.06));
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 24px color-mix(in srgb, var(--cc) 12%, transparent);
+  }
+  .card:hover {
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 8px 36px color-mix(in srgb, var(--cc) 28%, transparent),
+                inset 0 0 28px color-mix(in srgb, var(--cc) 8%, transparent);
+    border-color: color-mix(in srgb, var(--cc) 55%, transparent);
+  }
+
+  /* shimmer top line */
+  .card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent 0%, var(--cc) 50%, transparent 100%);
+    opacity: 0.9;
+  }
+  /* glow dot top-right */
+  .card::after {
+    content: '';
+    position: absolute; top: 12px; right: 12px;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--cc);
+    box-shadow: 0 0 8px var(--cc), 0 0 16px var(--cc);
+    animation: dot 2.3s ease-in-out infinite;
+  }
+  @keyframes dot { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+  /* glass sheen overlay */
+  .card .sheen {
+    position: absolute; top: 0; left: -60%; width: 40%; height: 100%;
+    background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.06) 50%, transparent 60%);
+    pointer-events: none;
+    transition: left 0.5s ease;
+  }
+  .card:hover .sheen { left: 130%; }
+
+  .c-num { font-size: 0.58rem; letter-spacing: 3px; color: var(--cc); font-family: 'Orbitron', monospace; opacity: 0.75; }
+  .c-emoji { font-size: 1.9rem; display: block; margin: 7px 0 5px; }
+  .c-title { font-size: 1.02rem; font-weight: 900; color: #fff; letter-spacing: 1px; }
+  .c-sub { font-size: 0.72rem; color: rgba(200,230,255,0.5); margin-top: 3px; }
+
+  .c-prog { margin-top: 13px; }
+  .c-bar { background: rgba(0,0,0,0.3); border-radius: 99px; height: 5px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
+  .c-fill { height: 100%; border-radius: 99px; background: var(--cc); box-shadow: 0 0 6px var(--cc); transition: width 0.6s ease; }
+  .c-lbl { font-size: 0.62rem; color: rgba(200,230,255,0.4); margin-top: 5px; font-family: 'Orbitron', monospace; display: flex; justify-content: space-between; }
+
+  /* unit theme colors */
+  .u1  { --cc: #4CAF50; }
+  .u2  { --cc: #7C4DFF; }
+  .u3  { --cc: #C060E0; }
+  .u4  { --cc: #FF5722; }
+  .u5  { --cc: #2196F3; }
+  .u6  { --cc: #00C853; }
+  .u7  { --cc: #FFA726; }
+  .u8  { --cc: #00BCD4; }
+  .u9  { --cc: #EF5350; }
+  .u10 { --cc: #C9A84C; }
+
+  /* ══ FOOTER ══ */
+  footer {
+    text-align: center; padding: 30px 0 0;
+    font-size: 0.6rem; color: rgba(74,127,165,0.6);
+    letter-spacing: 3px; font-family: 'Orbitron', monospace; line-height: 2.2;
+  }
+  footer em { color: rgba(0,212,255,0.5); font-style: normal; }
+
+  @media (max-width: 440px) {
+    .grid { grid-template-columns: 1fr; }
+    .h-title { font-size: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HEADER -->
+<header>
+  <div class="brk brk-tl"></div><div class="brk brk-tr"></div>
+  <div class="brk brk-bl"></div><div class="brk brk-br"></div>
+  <div class="sys-tag">// READING SYSTEM v1.0</div>
+
+  <!-- Original chiikawa-style mascot (100% original SVG) -->
+  <div class="mascot">
+    <span class="star-l">✦</span>
+    <svg viewBox="0 0 100 110" xmlns="http://www.w3.org/2000/svg">
+      <!-- glow aura -->
+      <ellipse cx="50" cy="95" rx="28" ry="6" fill="rgba(0,212,255,0.12)"/>
+      <!-- body round -->
+      <ellipse cx="50" cy="70" rx="26" ry="24" fill="#FAFAFA"/>
+      <!-- head round -->
+      <circle cx="50" cy="42" r="28" fill="#FAFAFA"/>
+      <!-- ear L -->
+      <ellipse cx="26" cy="20" rx="9" ry="11" fill="#FAFAFA" transform="rotate(-12 26 20)"/>
+      <ellipse cx="26" cy="20" rx="5" ry="7" fill="#FFD6E0" transform="rotate(-12 26 20)"/>
+      <!-- ear R -->
+      <ellipse cx="74" cy="20" rx="9" ry="11" fill="#FAFAFA" transform="rotate(12 74 20)"/>
+      <ellipse cx="74" cy="20" rx="5" ry="7" fill="#FFD6E0" transform="rotate(12 74 20)"/>
+      <!-- face shadow bottom -->
+      <ellipse cx="50" cy="56" rx="18" ry="6" fill="rgba(0,0,0,0.04)"/>
+      <!-- eyes -->
+      <circle cx="38" cy="40" r="6" fill="#1A0A00"/>
+      <circle cx="62" cy="40" r="6" fill="#1A0A00"/>
+      <!-- eye shine big -->
+      <circle cx="40.5" cy="37.5" r="2.5" fill="#fff"/>
+      <circle cx="64.5" cy="37.5" r="2.5" fill="#fff"/>
+      <!-- eye shine small -->
+      <circle cx="37" cy="42" r="1" fill="#fff" opacity="0.7"/>
+      <circle cx="61" cy="42" r="1" fill="#fff" opacity="0.7"/>
+      <!-- blush L -->
+      <ellipse cx="30" cy="48" rx="7" ry="4" fill="#FFB3C1" opacity="0.6"/>
+      <!-- blush R -->
+      <ellipse cx="70" cy="48" rx="7" ry="4" fill="#FFB3C1" opacity="0.6"/>
+      <!-- nose -->
+      <ellipse cx="50" cy="50" rx="2.5" ry="1.8" fill="#C49090"/>
+      <!-- smile -->
+      <path d="M 42 55 Q 50 62 58 55" stroke="#C49090" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <!-- tiny arms -->
+      <ellipse cx="24" cy="72" rx="7" ry="5" fill="#FAFAFA" transform="rotate(-20 24 72)"/>
+      <ellipse cx="76" cy="72" rx="7" ry="5" fill="#FAFAFA" transform="rotate(20 76 72)"/>
+      <!-- legs -->
+      <ellipse cx="38" cy="91" rx="9" ry="6" fill="#F0F0F0"/>
+      <ellipse cx="62" cy="91" rx="9" ry="6" fill="#F0F0F0"/>
+      <!-- cyber visor / headband -->
+      <rect x="22" y="26" width="56" height="7" rx="3.5"
+            fill="none" stroke="url(#visorGrad)" stroke-width="1.8" opacity="0.85"/>
+      <!-- visor center gem -->
+      <circle cx="50" cy="29.5" r="3.5" fill="#00D4FF" opacity="0.9"/>
+      <circle cx="51.2" cy="28.3" r="1.2" fill="#fff" opacity="0.7"/>
+      <!-- visor side dots -->
+      <circle cx="33" cy="29.5" r="2" fill="#7B2FFF" opacity="0.8"/>
+      <circle cx="67" cy="29.5" r="2" fill="#7B2FFF" opacity="0.8"/>
+      <!-- tiny book -->
+      <rect x="56" y="75" width="13" height="9" rx="2" fill="#00D4FF" opacity="0.85"/>
+      <rect x="57" y="76" width="5.5" height="7" rx="1" fill="rgba(255,255,255,0.25)"/>
+      <line x1="62.5" y1="76" x2="62.5" y2="83" stroke="#0099BB" stroke-width="0.8"/>
+      <!-- star sparkles -->
+      <text x="82" y="30" font-size="8" fill="#FFD700" opacity="0.9">✦</text>
+      <text x="10" y="60" font-size="6" fill="#00D4FF" opacity="0.7">✦</text>
+      <defs>
+        <linearGradient id="visorGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#7B2FFF"/>
+          <stop offset="50%" stop-color="#00D4FF"/>
+          <stop offset="100%" stop-color="#7B2FFF"/>
+        </linearGradient>
+      </defs>
+    </svg>
+    <span class="star-r">✦</span>
+  </div>
+
+  <div class="h-title">旻翰閱讀小教室</div>
+  <div class="h-sub">每篇故事，都是一次冒險 ✦</div>
+  <div class="h-badge">✦ 10 UNITS · 200 ARTICLES ✦</div>
+</header>
+
+<!-- TOTAL PROGRESS -->
+<div class="total">
+  <div>
+    <div class="total-lbl">TOTAL PROGRESS</div>
+    <div class="total-num"><span id="totalDone">000</span><span style="font-size:0.8rem;color:var(--muted)"> /200</span></div>
+  </div>
+  <div class="total-right">
+    <div class="t-bar"><div class="t-fill" id="totalFill" style="width:0%"></div></div>
+    <div class="t-pct"><span id="totalPct">0.0</span>% COMPLETE</div>
+  </div>
+</div>
+
+<!-- UNITS -->
+<div class="sec-lbl">SELECT MISSION</div>
+<div class="grid">
+
+  <a class="card u1" href="unit1.html">
+    <div class="sheen"></div>
+    <div class="c-num">UNIT · 01</div>
+    <span class="c-emoji">🐾</span>
+    <div class="c-title">動物世界</div>
+    <div class="c-sub">認識各種動物朋友</div>
+    <div class="c-prog">
+      <div class="c-bar"><div class="c-fill" id="p1" style="width:0%"></div></div>
+      <div class="c-lbl"><span id="d1">0</span>/20<span>DONE</span></div>
+    </div>
+  </a>
+
+  <a class="card u2" href="unit2.html">
+    <div class="sheen"></div>
+    <div class="c-num">UNIT · 02</div>
+    <span class="c-emoji">🌸</span>
+    <div class="c-title">四季變化</div>
+    <div class="c-sub">感受四季的美麗</div>
+    <div class="c-prog">
+      <div class="c-bar"><div class="c-fill" id="p2" style="width:0%"></div></div>
+      <div class="c-lbl"><span id="d2">0</span>/20<span>DONE</span></div>
+    </div>
+  </a>
+
+  <a class="card u3" href="unit3.html">
+    <div class="sheen"></div>
+    <div class="c-num">UNIT · 03</div>
+    <span class="c-emoji">👨‍👩‍👧</span>
+    <div class="c-title">家人與愛</div>
+    <div class="c-sub">感受家的溫暖</div>
+    <div class="c-prog">
+      <div class="c-bar"><div class="c-fill" id="p3" style="width:0%"></div></div>
+      <div class="c-lbl"><span id="d3">0</span>/20<span>DONE</span></div>
+    </div>
+  </a>
+
+  <a class="card u4" href="unit4.html">
+    <div class="sheen"></div>
+    <div class="c-num">UNIT · 04</div>
+    <span class="c-emoji">🍱</span>
+    <div class="c-title">美食天地</div>
+    <div class="c-sub">探索美食的世界</div>
+    <div class="c-prog">
+      <div class="c-bar"><div class="c-fill" id="p4" style="width:0%"></div></div>
+      <div class="c-lbl"><span id="d4">0</span>/20<span>DONE</span></div>
+    </div>
+  </a>
+
+  <a class="card u5" href="unit5.html">
+    <div class="sheen"></div>
+    <div class="c-num">UNIT · 05</div>
+    <span class="c-emoji">🚌</span>
+    <div class="c-title">交通工具</div>
+    <div class="c-sub">認識各種交通工具</div>
+    <div class="c-prog">
+      <div class="c-bar"><div class="c-fill" id="p5" style="width:0%"></div></div>
+      <div class="c-lbl"><span id="d5">0</span>/20<span>DONE</span></div>
+    </div>
+  </a>
+
+  <a class="card u6" href="unit6.html">
+    <div class="sheen"></div>
+    <div class="c-num">UNIT · 06</div>
+    <span class="c-emoji">🌿</span>
+    <div class="c-title">植物花草</div>
+    <div class="c-sub">探索植物的奧祕</div>
+    <div class="c-prog">
+      <div class="c-bar"><div class="c-fill" id="p6" style="width:0%"></div></div>
+      <div class="c-lbl"><span id="d6">0</span>/20<span>DONE</span></div>
+    </div>
+  </a>
+
+  <a class="card u7" href="unit7.html">
+    <div class="sheen"></div>
+    <div class="c-num">UNIT · 07</div>
+    <span class="c-emoji">🏫</span>
+    <div class="c-title">學校生活</div>
+    <div class="c-sub">記錄校園的點滴</div>
+    <div class="c-prog">
+      <div class="c-bar"><div class="c-fill" id="p7" style="width:0%"></div></div>
+      <div class="c-lbl"><span id="d7">0</span>/20<span>DONE</span></div>
+    </div>
+  </a>
+
+  <a class="card u8" href="unit8.html">
+    <div class="sheen"></div>
+    <div class="c-num">UNIT · 08</div>
+    <span class="c-emoji">🌊</span>
+    <div class="c-title">大自然奇觀</div>
+    <div class="c-sub">探索大自然的奇蹟</div>
+    <div class="c-prog">
+      <div class="c-bar"><div class="c-fill" id="p8" style="width:0%"></div></div>
+      <div class="c-lbl"><span id="d8">0</span>/20<span>DONE</span></div>
+    </div>
+  </a>
+
+  <a class="card u9" href="unit9.html">
+    <div class="sheen"></div>
+    <div class="c-num">UNIT · 09</div>
+    <span class="c-emoji">🎉</span>
+    <div class="c-title">節慶習俗</div>
+    <div class="c-sub">認識傳統節慶文化</div>
+    <div class="c-prog">
+      <div class="c-bar"><div class="c-fill" id="p9" style="width:0%"></div></div>
+      <div class="c-lbl"><span id="d9">0</span>/20<span>DONE</span></div>
+    </div>
+  </a>
+
+  <a class="card u10" href="unit10.html">
+    <div class="sheen"></div>
+    <div class="c-num">UNIT · 10</div>
+    <span class="c-emoji">📜</span>
+    <div class="c-title">唐詩宋詞</div>
+    <div class="c-sub">品讀千年詩詞之美</div>
+    <div class="c-prog">
+      <div class="c-bar"><div class="c-fill" id="p10" style="width:0%"></div></div>
+      <div class="c-lbl"><span id="d10">0</span>/20<span>DONE</span></div>
+    </div>
+  </a>
+
+</div>
+
+<footer>
+  <em>// DESIGNED BY CHIEN, HSIAO-CHUAN</em><br>
+  旻翰閱讀小教室 · READING SYSTEM
+</footer>
+
+</div>
+<script>
+const keys = {1:'uNdone_u1_',2:'uNdone_u2_',3:'uNdone_u3_',4:'uNdone_u4_',
+  5:'uNdone_u5_',6:'uNdone_u6_',7:'uNdone_u7_',8:'uNdone_u8_',
+  9:'uNdone_u9_',10:'uNdone_u10_'};
+function getDone(u){
+  let n=0; for(let i=1;i<=20;i++) if(localStorage.getItem(keys[u]+i)==='done') n++;
+  return n;
+}
+function init(){
+  let total=0;
+  for(let u=1;u<=10;u++){
+    const d=getDone(u); total+=d;
+    document.getElementById('p'+u).style.width=(d/20*100)+'%';
+    document.getElementById('d'+u).textContent=d;
+  }
+  document.getElementById('totalDone').textContent=String(total).padStart(3,'0');
+  document.getElementById('totalFill').style.width=(total/200*100).toFixed(1)+'%';
+  document.getElementById('totalPct').textContent=(total/200*100).toFixed(1);
+}
+init();
+</script>
+</body>
+</html>
