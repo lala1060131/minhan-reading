@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>旻翰閱讀小教室｜單元7 學校生活</title>
+<style>
+  :root {
+    --main: #F5A623;
+    --dark: #D4820A;
+    --light: #FFF3DC;
+    --accent: #FF6B35;
+    --bg: #FFFBF3;
+    --card: #FFFFFF;
+    --text: #3D2B00;
+    --muted: #8B6914;
+    --correct: #4CAF50;
+    --wrong: #E53935;
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans TC', '微軟正黑體', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* HEADER */
+  .site-header {
+    background: linear-gradient(135deg, #F5A623 0%, #FF6B35 60%, #E84E0F 100%);
+    padding: 28px 20px 22px;
+    text-align: center;
+    box-shadow: 0 4px 16px rgba(245,166,35,0.3);
+  }
+  .site-header .emoji { font-size: 2.6rem; display: block; margin-bottom: 6px; }
+  .site-header h1 { font-size: 1.7rem; color: #fff; font-weight: 900; letter-spacing: 2px; text-shadow: 0 2px 8px rgba(0,0,0,0.18); }
+  .site-header p { color: #FFE9C0; font-size: 0.9rem; margin-top: 4px; }
+
+  /* PROGRESS */
+  .progressWrap { padding: 18px 20px 8px; max-width: 700px; margin: 0 auto; }
+  .progressLabel { font-size: 0.85rem; color: var(--muted); margin-bottom: 6px; font-weight: 600; }
+  .progressBar { background: #FDDEA0; border-radius: 99px; height: 12px; overflow: hidden; }
+  .progressFill { background: linear-gradient(90deg, #F5A623, #FF6B35); height: 100%; border-radius: 99px; transition: width 0.5s ease; }
+
+  /* LIST VIEW */
+  #listView { max-width: 700px; margin: 0 auto; padding: 10px 16px 40px; }
+  .sectionTitle { font-size: 0.8rem; font-weight: 700; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin: 18px 0 10px; }
+  .articleGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+  .listCard {
+    background: var(--card);
+    border: 2px solid #FDDEA0;
+    border-radius: var(--radius);
+    padding: 14px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    position: relative;
+  }
+  .listCard:hover { border-color: var(--main); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(245,166,35,0.2); }
+  .listCard .num { font-size: 0.7rem; color: var(--muted); font-weight: 700; }
+  .listCard .title { font-size: 0.95rem; font-weight: 700; color: var(--text); margin-top: 4px; line-height: 1.4; }
+  .listCard .badge {
+    position: absolute; top: 8px; right: 8px;
+    font-size: 0.65rem; padding: 2px 6px; border-radius: 99px;
+    font-weight: 700;
+  }
+  .listCard.done { border-color: var(--correct); background: #F0FFF4; }
+  .listCard.done .badge { background: var(--correct); color: #fff; }
+  .listCard.undone .badge { background: #FFE082; color: #7A5500; }
+
+  /* READER VIEW */
+  #readerView { display: none; max-width: 700px; margin: 0 auto; padding: 10px 16px 60px; }
+  .backBtn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--main); color: #fff; border: none; border-radius: 99px;
+    padding: 8px 18px; font-size: 0.9rem; font-weight: 700; cursor: pointer;
+    margin-bottom: 16px; transition: background 0.2s;
+  }
+  .backBtn:hover { background: var(--dark); }
+  .readerCard {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 24px 20px;
+    box-shadow: 0 4px 20px rgba(245,166,35,0.12);
+    border: 2px solid #FDDEA0;
+    margin-bottom: 16px;
+  }
+  .articleTitle { font-size: 1.3rem; font-weight: 900; color: var(--accent); margin-bottom: 16px; text-align: center; }
+  .articleBody { font-size: 1.1rem; line-height: 2.8; color: var(--text); }
+  ruby { ruby-align: center; }
+  rt { font-size: 0.5em; color: var(--muted); letter-spacing: 0.5px; }
+
+  /* VOCAB */
+  .vocabSection { margin-top: 20px; }
+  .vocabTitle { font-size: 0.85rem; font-weight: 700; color: var(--muted); letter-spacing: 2px; margin-bottom: 10px; }
+  .vocabCard {
+    background: var(--light);
+    border-left: 4px solid var(--main);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+  }
+  .vocabWord { font-weight: 900; color: var(--accent); font-size: 1rem; }
+  .vocabType { font-size: 0.7rem; background: var(--main); color: #fff; border-radius: 99px; padding: 1px 7px; margin-left: 6px; vertical-align: middle; }
+  .vocabZy { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+  .vocabMeaning { font-size: 0.9rem; color: var(--text); margin-top: 4px; }
+  .vocabExample { font-size: 0.85rem; color: var(--muted); margin-top: 4px; font-style: italic; }
+
+  /* QUIZ */
+  .quizSection { margin-top: 20px; }
+  .quizTitle { font-size: 0.85rem; font-weight: 700; color: var(--muted); letter-spacing: 2px; margin-bottom: 10px; }
+  .quizCard {
+    background: var(--card);
+    border: 2px solid #FDDEA0;
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+  .quizQ { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 12px; line-height: 1.6; }
+  .quizOpts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .optBtn {
+    background: var(--light);
+    border: 2px solid #FDDEA0;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.18s;
+    text-align: left;
+    line-height: 1.4;
+  }
+  .optBtn:hover:not(:disabled) { border-color: var(--main); background: #FFF3DC; }
+  .optBtn.correct { background: #E8F5E9; border-color: var(--correct); color: #1B5E20; }
+  .optBtn.wrong { background: #FFEBEE; border-color: var(--wrong); color: #B71C1C; }
+  .optBtn:disabled { cursor: default; }
+  .explanation {
+    display: none; margin-top: 10px;
+    background: #FFF8E1; border-radius: 8px; padding: 10px 12px;
+    font-size: 0.88rem; color: #6D4C00; border-left: 3px solid var(--main);
+  }
+
+  /* COMPLETION */
+  .completionBanner {
+    display: none; text-align: center;
+    background: linear-gradient(135deg, #F5A623, #FF6B35);
+    color: #fff; border-radius: var(--radius);
+    padding: 24px; margin-top: 16px;
+    font-size: 1.1rem; font-weight: 700;
+  }
+  .completionBanner .big { font-size: 2rem; display: block; margin-bottom: 8px; }
+
+  @media (max-width: 480px) {
+    .articleGrid { grid-template-columns: repeat(2, 1fr); }
+    .quizOpts { grid-template-columns: 1fr; }
+    .site-header h1 { font-size: 1.4rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <span class="emoji">🏫</span>
+  <h1>單元七・學校生活</h1>
+  <p>旻翰閱讀小教室｜20篇文章等你來挑戰！</p>
+</div>
+
+<div class="progressWrap">
+  <div class="progressLabel">閱讀進度：<span id="doneCount">0</span> / 20 篇完成</div>
+  <div class="progressBar"><div class="progressFill" id="progressFill" style="width:0%"></div></div>
+</div>
+
+<div id="listView">
+  <div class="sectionTitle">📚 文章列表</div>
+  <div class="articleGrid" id="articleGrid"></div>
+</div>
+
+<div id="readerView">
+  <button class="backBtn" onclick="showList()">← 返回列表</button>
+  <div id="articleContent"></div>
+</div>
+
+<script>
+const ARTICLES = [
+  {
+    id: 1, title: "第一天上學",
+    body: `<ruby>第<rt>ㄉㄧˋ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>天<rt>ㄊㄧㄢ</rt></ruby><ruby>上<rt>ㄕㄤˋ</rt></ruby><ruby>學<rt>ㄒㄩㄝˊ</rt></ruby>，<ruby>小<rt>ㄒㄧㄠˇ</rt></ruby><ruby>明<rt>ㄇㄧㄥˊ</rt></ruby><ruby>揹<rt>ㄅㄟ</rt></ruby><ruby>著<rt>ㄓㄜ</rt></ruby><ruby>嶄<rt>ㄓㄢˇ</rt></ruby><ruby>新<rt>ㄒㄧㄣ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>書<rt>ㄕㄨ</rt></ruby><ruby>包<rt>ㄅㄠ</rt></ruby>，<ruby>心<rt>ㄒㄧㄣ</rt></ruby><ruby>裡<rt>ㄌㄧˇ</rt></ruby><ruby>既<rt>ㄐㄧˋ</rt></ruby><ruby>期<rt>ㄑㄧ</rt></ruby><ruby>待<rt>ㄉㄞˋ</rt></ruby><ruby>又<rt>ㄧㄡˋ</rt></ruby><ruby>緊<rt>ㄐㄧㄣˇ</rt></ruby><ruby>張<rt>ㄓㄤ</rt></ruby>。<ruby>走<rt>ㄗㄡˇ</rt></ruby><ruby>進<rt>ㄐㄧㄣˋ</rt></ruby><ruby>教<rt>ㄐㄧㄠˋ</rt></ruby><ruby>室<rt>ㄕˋ</rt></ruby>，<ruby>他<rt>ㄊㄚ</rt></ruby><ruby>看<rt>ㄎㄢˋ</rt></ruby><ruby>見<rt>ㄐㄧㄢˋ</rt></ruby><ruby>許<rt>ㄒㄩˇ</rt></ruby><ruby>多<rt>ㄉㄨㄛ</rt></ruby><ruby>陌<rt>ㄇㄛˋ</rt></ruby><ruby>生<rt>ㄕㄥ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>面<rt>ㄇㄧㄢˋ</rt></ruby><ruby>孔<rt>ㄎㄨㄥˇ</rt></ruby>。<ruby>老<rt>ㄌㄠˇ</rt></ruby><ruby>師<rt>ㄕ</rt></ruby><ruby>微<rt>ㄨㄟ</rt></ruby><ruby>笑<rt>ㄒㄧㄠˋ</rt></ruby><ruby>著<rt>ㄓㄜ</rt></ruby><ruby>請<rt>ㄑㄧㄥˇ</rt></ruby><ruby>大<rt>ㄉㄚˋ</rt></ruby><ruby>家<rt>ㄐㄧㄚ</rt></ruby><ruby>輪<rt>ㄌㄨㄣˊ</rt></ruby><ruby>流<rt>ㄌㄧㄡˊ</rt></ruby><ruby>自<rt>ㄗˋ</rt></ruby><ruby>我<rt>ㄨㄛˇ</rt></ruby><ruby>介<rt>ㄐㄧㄝˋ</rt></ruby><ruby>紹<rt>ㄕㄠˋ</rt></ruby>。<ruby>小<rt>ㄒㄧㄠˇ</rt></ruby><ruby>明<rt>ㄇㄧㄥˊ</rt></ruby><ruby>站<rt>ㄓㄢˋ</rt></ruby><ruby>起<rt>ㄑㄧˇ</rt></ruby><ruby>來<rt>ㄌㄞˊ</rt></ruby>，<ruby>鼓<rt>ㄍㄨˇ</rt></ruby><ruby>起<rt>ㄑㄧˇ</rt></ruby><ruby>勇<rt>ㄩㄥˇ</rt></ruby><ruby>氣<rt>ㄑㄧˋ</rt></ruby><ruby>說<rt>ㄕㄨㄛ</rt></ruby><ruby>出<rt>ㄔㄨ</rt></ruby><ruby>自<rt>ㄗˋ</rt></ruby><ruby>己<rt>ㄐㄧˇ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>名<rt>ㄇㄧㄥˊ</rt></ruby><ruby>字<rt>ㄗˋ</rt></ruby>，<ruby>同<rt>ㄊㄨㄥˊ</rt></ruby><ruby>學<rt>ㄒㄩㄝˊ</rt></ruby><ruby>們<rt>ㄇㄣ</rt></ruby><ruby>報<rt>ㄅㄠˋ</rt></ruby><ruby>以<rt>ㄧˇ</rt></ruby><ruby>熱<rt>ㄖㄜˋ</rt></ruby><ruby>烈<rt>ㄌㄧㄝˋ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>掌<rt>ㄓㄤˇ</rt></ruby><ruby>聲<rt>ㄕㄥ</rt></ruby>。<ruby>從<rt>ㄘㄨㄥˊ</rt></ruby><ruby>那<rt>ㄋㄚˋ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>刻<rt>ㄎㄜˋ</rt></ruby><ruby>起<rt>ㄑㄧˇ</rt></ruby>，<ruby>他<rt>ㄊㄚ</rt></ruby><ruby>知<rt>ㄓ</rt></ruby><ruby>道<rt>ㄉㄠˋ</rt></ruby><ruby>自<rt>ㄗˋ</rt></ruby><ruby>己<rt>ㄐㄧˇ</rt></ruby><ruby>不<rt>ㄅㄨˋ</rt></ruby><ruby>再<rt>ㄗㄞˋ</rt></ruby><ruby>孤<rt>ㄍㄨ</rt></ruby><ruby>單<rt>ㄉㄢ</rt></ruby>。`,
+    vocab: [
+      { w:"陌生", zy:"ㄇㄛˋ ㄕㄥ", type:"形容詞", meaning:"不認識、不熟悉的", example:"他走進陌生的城市，心裡感到不安。" },
+      { w:"輪流", zy:"ㄌㄨㄣˊ ㄌㄧㄡˊ", type:"動詞", meaning:"一個接一個，依序進行", example:"大家輪流發言，每人說三分鐘。" },
+      { w:"鼓起勇氣", zy:"ㄍㄨˇ ㄑㄧˇ ㄩㄥˇ ㄑㄧˋ", type:"成語", meaning:"振作精神，克服害怕，勇敢去做", example:"她鼓起勇氣，第一個上台表演。" }
+    ],
+    quiz: [
+      { q:"小明第一天上學，心裡有什麼感覺？", opts:["非常快樂，完全不緊張","既期待又緊張","非常害怕，不想上學","平靜，沒有感覺"], ans:1, exp:"文章說小明「既期待又緊張」，兩種心情都有。" },
+      { q:"老師請大家做什麼？", opts:["寫名字在黑板上","唱一首歌","輪流自我介紹","畫一張圖"], ans:2, exp:"老師請大家「輪流自我介紹」。" },
+      { q:"「鼓起勇氣」的意思最接近哪一個？", opts:["感到勇氣消失了","害怕得說不出話","努力克服膽怯，勇敢去做","找人幫自己說話"], ans:2, exp:"鼓起勇氣是振作精神、克服害怕的意思。" }
+    ]
+  },
+  {
+    id: 2, title: "認真聽講",
+    body: `<ruby>上<rt>ㄕㄤˋ</rt></ruby><ruby>課<rt>ㄎㄜˋ</rt></ruby><ruby>時<rt>ㄕˊ</rt></ruby>，<ruby>老<rt>ㄌㄠˇ</rt></ruby><ruby>師<rt>ㄕ</rt></ruby><ruby>在<rt>ㄗㄞˋ</rt></ruby><ruby>黑<rt>ㄏㄟ</rt></ruby><ruby>板<rt>ㄅㄢˇ</rt></ruby><ruby>上<rt>ㄕㄤˋ</rt></ruby><ruby>寫<rt>ㄒㄧㄝˇ</rt></ruby><ruby>下<rt>ㄒㄧㄚˋ</rt></ruby><ruby>重<rt>ㄓㄨㄥˋ</rt></ruby><ruby>要<rt>ㄧㄠˋ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>筆<rt>ㄅㄧˇ</rt></ruby><ruby>記<rt>ㄐㄧˋ</rt></ruby>。<ruby>小<rt>ㄒㄧㄠˇ</rt></ruby><ruby>華<rt>ㄏㄨㄚˊ</rt></ruby><ruby>專<rt>ㄓㄨㄢ</rt></ruby><ruby>心<rt>ㄒㄧㄣ</rt></ruby><ruby>聽<rt>ㄊㄧㄥ</rt></ruby><ruby>講<rt>ㄐㄧㄤˇ</rt></ruby>，<ruby>仔<rt>ㄗˇ</rt></ruby><ruby>細<rt>ㄒㄧˋ</rt></ruby><ruby>抄<rt>ㄔㄠ</rt></ruby><ruby>寫<rt>ㄒㄧㄝˇ</rt></ruby><ruby>每<rt>ㄇㄟˇ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>個<rt>ㄍㄜˋ</rt></ruby><ruby>字<rt>ㄗˋ</rt></ruby>。<ruby>她<rt>ㄊㄚ</rt></ruby><ruby>明<rt>ㄇㄧㄥˊ</rt></ruby><ruby>白<rt>ㄅㄞˊ</rt></ruby>，<ruby>課<rt>ㄎㄜˋ</rt></ruby><ruby>堂<rt>ㄊㄤˊ</rt></ruby><ruby>上<rt>ㄕㄤˋ</rt></ruby><ruby>學<rt>ㄒㄩㄝˊ</rt></ruby><ruby>到<rt>ㄉㄠˋ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>知<rt>ㄓ</rt></ruby><ruby>識<rt>ㄕˋ</rt></ruby>，<ruby>是<rt>ㄕˋ</rt></ruby><ruby>任<rt>ㄖㄣˋ</rt></ruby><ruby>何<rt>ㄏㄜˊ</rt></ruby><ruby>人<rt>ㄖㄣˊ</rt></ruby><ruby>都<rt>ㄉㄡ</rt></ruby><ruby>搶<rt>ㄑㄧㄤˇ</rt></ruby><ruby>不<rt>ㄅㄨˋ</rt></ruby><ruby>走<rt>ㄗㄡˇ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>財<rt>ㄘㄞˊ</rt></ruby><ruby>富<rt>ㄈㄨˋ</rt></ruby>。<ruby>旁<rt>ㄆㄤˊ</rt></ruby><ruby>邊<rt>ㄅㄧㄢ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>同<rt>ㄊㄨㄥˊ</rt></ruby><ruby>學<rt>ㄒㄩㄝˊ</rt></ruby><ruby>悄<rt>ㄑㄧㄠ</rt></ruby><ruby>悄<rt>ㄑㄧㄠ</rt></ruby><ruby>傳<rt>ㄔㄨㄢˊ</rt></ruby><ruby>紙<rt>ㄓˇ</rt></ruby><ruby>條<rt>ㄊㄧㄠˊ</rt></ruby>，<ruby>小<rt>ㄒㄧㄠˇ</rt></ruby><ruby>華<rt>ㄏㄨㄚˊ</rt></ruby><ruby>只<rt>ㄓˇ</rt></ruby><ruby>是<rt>ㄕˋ</rt></ruby><ruby>搖<rt>ㄧㄠˊ</rt></ruby><ruby>搖<rt>ㄧㄠˊ</rt></ruby><ruby>頭<rt>ㄊㄡˊ</rt></ruby>，<ruby>繼<rt>ㄐㄧˋ</rt></ruby><ruby>續<rt>ㄒㄩˋ</rt></ruby><ruby>認<rt>ㄖㄣˋ</rt></ruby><ruby>真<rt>ㄓㄣ</rt></ruby><ruby>聽<rt>ㄊㄧㄥ</rt></ruby><ruby>課<rt>ㄎㄜˋ</rt></ruby>。<ruby>考<rt>ㄎㄠˇ</rt></ruby><ruby>試<rt>ㄕˋ</rt></ruby><ruby>成<rt>ㄔㄥˊ</rt></ruby><ruby>績<rt>ㄐㄧˋ</rt></ruby><ruby>發<rt>ㄈㄚ</rt></ruby><ruby>下<rt>ㄒㄧㄚˋ</rt></ruby><ruby>來<rt>ㄌㄞˊ</rt></ruby>，<ruby>小<rt>ㄒㄧㄠˇ</rt></ruby><ruby>華<rt>ㄏㄨㄚˊ</rt></ruby><ruby>得<rt>ㄉㄜˊ</rt></ruby><ruby>到<rt>ㄉㄠˋ</rt></ruby><ruby>滿<rt>ㄇㄢˇ</rt></ruby><ruby>分<rt>ㄈㄣ</rt></ruby>，<ruby>努<rt>ㄋㄨˇ</rt></ruby><ruby>力<rt>ㄌㄧˋ</rt></ruby><ruby>從<rt>ㄘㄨㄥˊ</rt></ruby><ruby>來<rt>ㄌㄞˊ</rt></ruby><ruby>不<rt>ㄅㄨˋ</rt></ruby><ruby>會<rt>ㄏㄨㄟˋ</rt></ruby><ruby>白<rt>ㄅㄞˊ</rt></ruby><ruby>費<rt>ㄈㄟˋ</rt></ruby>。`,
+    vocab: [
+      { w:"專心", zy:"ㄓㄨㄢ ㄒㄧㄣ", type:"形容詞", meaning:"全神貫注，心思集中在一件事上", example:"寫作業要專心，才不會寫錯。" },
+      { w:"財富", zy:"ㄘㄞˊ ㄈㄨˋ", type:"名詞", meaning:"有價值的東西，包括金錢或知識", example:"書本裡藏著珍貴的知識財富。" },
+      { w:"白費", zy:"ㄅㄞˊ ㄈㄟˋ", type:"動詞", meaning:"白白浪費，沒有得到應有的回報", example:"他努力練習，絕對不會白費。" }
+    ],
+    quiz: [
+      { q:"小華上課時，旁邊同學在做什麼？", opts:["一起認真抄筆記","對她做鬼臉","悄悄傳紙條","在睡覺"], ans:2, exp:"旁邊的同學「悄悄傳紙條」，但小華搖頭拒絕。" },
+      { q:"「任何人都搶不走的財富」是指什麼？", opts:["放在抽屜裡的錢","媽媽買的新書包","課堂上學到的知識","好看的成績單"], ans:2, exp:"文章說課堂上學到的知識是「任何人都搶不走的財富」。" },
+      { q:"小華考試得到滿分，原因是什麼？", opts:["考試前猜到題目","她運氣很好","她上課專心聽講、認真抄筆記","偷看旁邊同學的答案"], ans:2, exp:"小華專心聽講、仔細抄筆記，努力不白費，才得到滿分。" }
+    ]
+  },
+  {
+    id: 3, title: "下課時間",
+    body: `<ruby>下<rt>ㄒㄧㄚˋ</rt></ruby><ruby>課<rt>ㄎㄜˋ</rt></ruby><ruby>鈴<rt>ㄌㄧㄥˊ</rt></ruby><ruby>聲<rt>ㄕㄥ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>響<rt>ㄒㄧㄤˇ</rt></ruby>，<ruby>教<rt>ㄐㄧㄠˋ</rt></ruby><ruby>室<rt>ㄕˋ</rt></ruby><ruby>裡<rt>ㄌㄧˇ</rt></ruby><ruby>頓<rt>ㄉㄨㄣˋ</rt></ruby><ruby>時<rt>ㄕˊ</rt></ruby><ruby>熱<rt>ㄖㄜˋ</rt></ruby><ruby>鬧<rt>ㄋㄠˋ</rt></ruby><ruby>起<rt>ㄑㄧˇ</rt></ruby><ruby>來<rt>ㄌㄞˊ</rt></ruby>。<ruby>有<rt>ㄧㄡˇ</rt></ruby><ruby>人<rt>ㄖㄣˊ</rt></ruby><ruby>衝<rt>ㄔㄨㄥ</rt></ruby><ruby>向<rt>ㄒㄧㄤˋ</rt></ruby><ruby>操<rt>ㄘㄠ</rt></ruby><ruby>場<rt>ㄔㄤˊ</rt></ruby><ruby>玩<rt>ㄨㄢˊ</rt></ruby><ruby>耍<rt>ㄕㄨㄚˇ</rt></ruby>，<ruby>有<rt>ㄧㄡˇ</rt></ruby><ruby>人<rt>ㄖㄣˊ</rt></ruby><ruby>留<rt>ㄌㄧㄡˊ</rt></ruby><ruby>在<rt>ㄗㄞˋ</rt></ruby><ruby>座<rt>ㄗㄨㄛˋ</rt></ruby><ruby>位<rt>ㄨㄟˋ</rt></ruby><ruby>上<rt>ㄕㄤˋ</rt></ruby><ruby>聊<rt>ㄌㄧㄠˊ</rt></ruby><ruby>天<rt>ㄊㄧㄢ</rt></ruby>。<ruby>小<rt>ㄒㄧㄠˇ</rt></ruby><ruby>芬<rt>ㄈㄣ</rt></ruby><ruby>和<rt>ㄏㄢˋ</rt></ruby><ruby>同<rt>ㄊㄨㄥˊ</rt></ruby><ruby>學<rt>ㄒㄩㄝˊ</rt></ruby><ruby>們<rt>ㄇㄣ</rt></ruby><ruby>在<rt>ㄗㄞˋ</rt></ruby><ruby>走<rt>ㄗㄡˇ</rt></ruby><ruby>廊<rt>ㄌㄤˊ</rt></ruby><ruby>玩<rt>ㄨㄢˊ</rt></ruby><ruby>跳<rt>ㄊㄧㄠˋ</rt></ruby><ruby>繩<rt>ㄕㄥˊ</rt></ruby>，<ruby>笑<rt>ㄒㄧㄠˋ</rt></ruby><ruby>聲<rt>ㄕㄥ</rt></ruby><ruby>此<rt>ㄘˇ</rt></ruby><ruby>起<rt>ㄑㄧˇ</rt></ruby><ruby>彼<rt>ㄅㄧˇ</rt></ruby><ruby>落<rt>ㄌㄨㄛˋ</rt></ruby>。<ruby>雖<rt>ㄙㄨㄟ</rt></ruby><ruby>然<rt>ㄖㄢˊ</rt></ruby><ruby>下<rt>ㄒㄧㄚˋ</rt></ruby><ruby>課<rt>ㄎㄜˋ</rt></ruby><ruby>只<rt>ㄓˇ</rt></ruby><ruby>有<rt>ㄧㄡˇ</rt></ruby><ruby>十<rt>ㄕˊ</rt></ruby><ruby>分<rt>ㄈㄣ</rt></ruby><ruby>鐘<rt>ㄓㄨㄥ</rt></ruby>，<ruby>卻<rt>ㄑㄩㄝˋ</rt></ruby><ruby>是<rt>ㄕˋ</rt></ruby><ruby>大<rt>ㄉㄚˋ</rt></ruby><ruby>家<rt>ㄐㄧㄚ</rt></ruby><ruby>最<rt>ㄗㄨㄟˋ</rt></ruby><ruby>珍<rt>ㄓㄣ</rt></ruby><ruby>惜<rt>ㄒㄧ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>快<rt>ㄎㄨㄞˋ</rt></ruby><ruby>樂<rt>ㄌㄜˋ</rt></ruby><ruby>時<rt>ㄕˊ</rt></ruby><ruby>光<rt>ㄍㄨㄤ</rt></ruby>。<ruby>上<rt>ㄕㄤˋ</rt></ruby><ruby>課<rt>ㄎㄜˋ</rt></ruby><ruby>鐘<rt>ㄓㄨㄥ</rt></ruby><ruby>聲<rt>ㄕㄥ</rt></ruby><ruby>再<rt>ㄗㄞˋ</rt></ruby><ruby>度<rt>ㄉㄨˋ</rt></ruby><ruby>響<rt>ㄒㄧㄤˇ</rt></ruby><ruby>起<rt>ㄑㄧˇ</rt></ruby>，<ruby>孩<rt>ㄏㄞˊ</rt></ruby><ruby>子<rt>ㄗ</rt></ruby><ruby>們<rt>ㄇㄣ</rt></ruby><ruby>帶<rt>ㄉㄞˋ</rt></ruby><ruby>著<rt>ㄓㄜ</rt></ruby><ruby>滿<rt>ㄇㄢˇ</rt></ruby><ruby>足<rt>ㄗㄨˊ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>笑<rt>ㄒㄧㄠˋ</rt></ruby><ruby>容<rt>ㄖㄨㄥˊ</rt></ruby><ruby>回<rt>ㄏㄨㄟˊ</rt></ruby><ruby>到<rt>ㄉㄠˋ</rt></ruby><ruby>座<rt>ㄗㄨㄛˋ</rt></ruby><ruby>位<rt>ㄨㄟˋ</rt></ruby>。`,
+    vocab: [
+      { w:"頓時", zy:"ㄉㄨㄣˋ ㄕˊ", type:"副詞", meaning:"立刻、馬上，形容變化非常快速", example:"聽到好消息，他頓時笑了起來。" },
+      { w:"此起彼落", zy:"ㄘˇ ㄑㄧˇ ㄅㄧˇ ㄌㄨㄛˋ", type:"成語", meaning:"這裡起來，那裡落下，形容聲音或動作連續不斷", example:"球場上的加油聲此起彼落，非常熱鬧。" },
+      { w:"珍惜", zy:"ㄓㄣ ㄒㄧ", type:"動詞", meaning:"重視並好好把握，不輕易浪費", example:"我們要珍惜和朋友相處的時光。" }
+    ],
+    quiz: [
+      { q:"下課鈴聲響起後，教室裡的氣氛變得怎樣？", opts:["安靜得像圖書館","頓時熱鬧起來","大家繼續讀書","同學們都睡著了"], ans:1, exp:"文章說「頓時熱鬧起來」，表示立刻變得很熱鬧。" },
+      { q:"小芬和同學們在哪裡玩跳繩？", opts:["操場上","教室裡","走廊上","樓梯間"], ans:2, exp:"文章說小芬在「走廊」玩跳繩。" },
+      { q:"「此起彼落」在文章中是用來形容什麼？", opts:["同學跳繩的動作","孩子們回到座位的速度","笑聲連續不斷","鐘聲一直在響"], ans:2, exp:"「笑聲此起彼落」是形容笑聲連續不斷、熱鬧的樣子。" }
+    ]
+  },
+  {
+    id: 4, title: "圖書館的祕密",
+    body: `<ruby>學<rt>ㄒㄩㄝˊ</rt></ruby><ruby>校<rt>ㄒㄧㄠˋ</rt></ruby><ruby>圖<rt>ㄊㄨˊ</rt></ruby><ruby>書<rt>ㄕㄨ</rt></ruby><ruby>館<rt>ㄍㄨㄢˇ</rt></ruby><ruby>裡<rt>ㄌㄧˇ</rt></ruby><ruby>藏<rt>ㄘㄤˊ</rt></ruby><ruby>著<rt>ㄓㄜ</rt></ruby><ruby>無<rt>ㄨˊ</rt></ruby><ruby>數<rt>ㄕㄨˋ</rt></ruby><ruby>本<rt>ㄅㄣˇ</rt></ruby><ruby>書<rt>ㄕㄨ</rt></ruby>，<ruby>每<rt>ㄇㄟˇ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>本<rt>ㄅㄣˇ</rt></ruby><ruby>書<rt>ㄕㄨ</rt></ruby><ruby>都<rt>ㄉㄡ</rt></ruby><ruby>像<rt>ㄒㄧㄤˋ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>扇<rt>ㄕㄢˋ</rt></ruby><ruby>通<rt>ㄊㄨㄥ</rt></ruby><ruby>往<rt>ㄨㄤˇ</rt></ruby><ruby>不<rt>ㄅㄨˋ</rt></ruby><ruby>同<rt>ㄊㄨㄥˊ</rt></ruby><ruby>世<rt>ㄕˋ</rt></ruby><ruby>界<rt>ㄐㄧㄝˋ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>門<rt>ㄇㄣˊ</rt></ruby>。<ruby>小<rt>ㄒㄧㄠˇ</rt></ruby><ruby>琪<rt>ㄑㄧˊ</rt></ruby><ruby>喜<rt>ㄒㄧˇ</rt></ruby><ruby>歡<rt>ㄏㄨㄢ</rt></ruby><ruby>在<rt>ㄗㄞˋ</rt></ruby><ruby>圖<rt>ㄊㄨˊ</rt></ruby><ruby>書<rt>ㄕㄨ</rt></ruby><ruby>館<rt>ㄍㄨㄢˇ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>角<rt>ㄐㄧㄠˇ</rt></ruby><ruby>落<rt>ㄌㄨㄛˋ</rt></ruby><ruby>裡<rt>ㄌㄧˇ</rt></ruby><ruby>靜<rt>ㄐㄧㄥˋ</rt></ruby><ruby>靜<rt>ㄐㄧㄥˋ</rt></ruby><ruby>地<rt>ㄉㄧˋ</rt></ruby><ruby>看<rt>ㄎㄢˋ</rt></ruby><ruby>書<rt>ㄕㄨ</rt></ruby>。<ruby>她<rt>ㄊㄚ</rt></ruby><ruby>曾<rt>ㄘㄥˊ</rt></ruby><ruby>跟<rt>ㄍㄣ</rt></ruby><ruby>著<rt>ㄓㄜ</rt></ruby><ruby>書<rt>ㄕㄨ</rt></ruby><ruby>中<rt>ㄓㄨㄥ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>主<rt>ㄓㄨˇ</rt></ruby><ruby>角<rt>ㄐㄧㄠˇ</rt></ruby><ruby>冒<rt>ㄇㄠˋ</rt></ruby><ruby>險<rt>ㄒㄧㄢˇ</rt></ruby>、<ruby>哭<rt>ㄎㄨ</rt></ruby><ruby>過<rt>ㄍㄨㄛˋ</rt></ruby>、<ruby>也<rt>ㄧㄝˇ</rt></ruby><ruby>笑<rt>ㄒㄧㄠˋ</rt></ruby><ruby>過<rt>ㄍㄨㄛˋ</rt></ruby>。<ruby>閱<rt>ㄩㄝˋ</rt></ruby><ruby>讀<rt>ㄉㄨˊ</rt></ruby><ruby>讓<rt>ㄖㄤˋ</rt></ruby><ruby>她<rt>ㄊㄚ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>心<rt>ㄒㄧㄣ</rt></ruby><ruby>靈<rt>ㄌㄧㄥˊ</rt></ruby><ruby>更<rt>ㄍㄥˋ</rt></ruby><ruby>加<rt>ㄐㄧㄚ</rt></ruby><ruby>豐<rt>ㄈㄥ</rt></ruby><ruby>富<rt>ㄈㄨˋ</rt></ruby>，<ruby>每<rt>ㄇㄟˇ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>次<rt>ㄘˋ</rt></ruby><ruby>翻<rt>ㄈㄢ</rt></ruby><ruby>開<rt>ㄎㄞ</rt></ruby><ruby>書<rt>ㄕㄨ</rt></ruby><ruby>頁<rt>ㄧㄝˋ</rt></ruby>，<ruby>都<rt>ㄉㄡ</rt></ruby><ruby>像<rt>ㄒㄧㄤˋ</rt></ruby><ruby>踏<rt>ㄊㄚˋ</rt></ruby><ruby>上<rt>ㄕㄤˋ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>段<rt>ㄉㄨㄢˋ</rt></ruby><ruby>嶄<rt>ㄓㄢˇ</rt></ruby><ruby>新<rt>ㄒㄧㄣ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>旅<rt>ㄌㄩˇ</rt></ruby><ruby>程<rt>ㄔㄥˊ</rt></ruby>。`,
+    vocab: [
+      { w:"無數", zy:"ㄨˊ ㄕㄨˋ", type:"形容詞", meaning:"數量非常多，多到數不清", example:"天空中有無數顆閃亮的星星。" },
+      { w:"心靈", zy:"ㄒㄧㄣ ㄌㄧㄥˊ", type:"名詞", meaning:"人的內心、精神世界", example:"音樂能撫慰受傷的心靈。" },
+      { w:"嶄新", zy:"ㄓㄢˇ ㄒㄧㄣ", type:"形容詞", meaning:"非常新，全新的，沒有任何舊的痕跡", example:"開學第一天，他穿上嶄新的制服。" }
+    ],
+    quiz: [
+      { q:"文章中，每一本書被比喻成什麼？", opts:["一艘船","一扇通往不同世界的門","一張藏寶圖","一位神秘的老師"], ans:1, exp:"文章說「每一本書都像一扇通往不同世界的門」。" },
+      { q:"小琪在圖書館喜歡做什麼？", opts:["和朋友聊天","在角落靜靜地看書","整理書架上的書","借書回家"], ans:1, exp:"小琪「喜歡在圖書館的角落裡靜靜地看書」。" },
+      { q:"閱讀帶給小琪最大的好處是什麼？", opts:["讓她認識很多新朋友","讓她的心靈更加豐富","讓她學會借書的方法","讓她考試成績進步"], ans:1, exp:"文章說「閱讀讓她的心靈更加豐富」。" }
+    ]
+  },
+  {
+    id: 5, title: "運動會前夕",
+    body: `<ruby>運<rt>ㄩㄣˋ</rt></ruby><ruby>動<rt>ㄉㄨㄥˋ</rt></ruby><ruby>會<rt>ㄏㄨㄟˋ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>前<rt>ㄑㄧㄢˊ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>天<rt>ㄊㄧㄢ</rt></ruby>，<ruby>全<rt>ㄑㄩㄢˊ</rt></ruby><ruby>班<rt>ㄅㄢ</rt></ruby><ruby>都<rt>ㄉㄡ</rt></ruby><ruby>在<rt>ㄗㄞˋ</rt></ruby><ruby>討<rt>ㄊㄠˇ</rt></ruby><ruby>論<rt>ㄌㄨㄣˋ</rt></ruby><ruby>明<rt>ㄇㄧㄥˊ</rt></ruby><ruby>天<rt>ㄊㄧㄢ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>比<rt>ㄅㄧˇ</rt></ruby><ruby>賽<rt>ㄙㄞˋ</rt></ruby>。<ruby>班<rt>ㄅㄢ</rt></ruby><ruby>長<rt>ㄓㄤˇ</rt></ruby><ruby>站<rt>ㄓㄢˋ</rt></ruby><ruby>在<rt>ㄗㄞˋ</rt></ruby><ruby>前<rt>ㄑㄧㄢˊ</rt></ruby><ruby>面<rt>ㄇㄧㄢˋ</rt></ruby>，<ruby>分<rt>ㄈㄣ</rt></ruby><ruby>配<rt>ㄆㄟˋ</rt></ruby><ruby>每<rt>ㄇㄟˇ</rt></ruby><ruby>位<rt>ㄨㄟˋ</rt></ruby><ruby>同<rt>ㄊㄨㄥˊ</rt></ruby><ruby>學<rt>ㄒㄩㄝˊ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>工<rt>ㄍㄨㄥ</rt></ruby><ruby>作<rt>ㄗㄨㄛˋ</rt></ruby>。<ruby>有<rt>ㄧㄡˇ</rt></ruby><ruby>人<rt>ㄖㄣˊ</rt></ruby><ruby>負<rt>ㄈㄨˋ</rt></ruby><ruby>責<rt>ㄗㄜˊ</rt></ruby><ruby>製<rt>ㄓˋ</rt></ruby><ruby>作<rt>ㄗㄨㄛˋ</rt></ruby><ruby>加<rt>ㄐㄧㄚ</rt></ruby><ruby>油<rt>ㄧㄡˊ</rt></ruby><ruby>牌<rt>ㄆㄞˊ</rt></ruby>，<ruby>有<rt>ㄧㄡˇ</rt></ruby><ruby>人<rt>ㄖㄣˊ</rt></ruby><ruby>負<rt>ㄈㄨˋ</rt></ruby><ruby>責<rt>ㄗㄜˊ</rt></ruby><ruby>準<rt>ㄓㄨㄣˇ</rt></ruby><ruby>備<rt>ㄅㄟˋ</rt></ruby><ruby>道<rt>ㄉㄠˋ</rt></ruby><ruby>具<rt>ㄐㄩˋ</rt></ruby>，<ruby>還<rt>ㄏㄞˊ</rt></ruby><ruby>有<rt>ㄧㄡˇ</rt></ruby><ruby>人<rt>ㄖㄣˊ</rt></ruby><ruby>負<rt>ㄈㄨˋ</rt></ruby><ruby>責<rt>ㄗㄜˊ</rt></ruby><ruby>為<rt>ㄨㄟˋ</rt></ruby><ruby>選<rt>ㄒㄩㄢˇ</rt></ruby><ruby>手<rt>ㄕㄡˇ</rt></ruby><ruby>加<rt>ㄐㄧㄚ</rt></ruby><ruby>油<rt>ㄧㄡˊ</rt></ruby><ruby>打<rt>ㄉㄚˇ</rt></ruby><ruby>氣<rt>ㄑㄧˋ</rt></ruby>。<ruby>大<rt>ㄉㄚˋ</rt></ruby><ruby>家<rt>ㄐㄧㄚ</rt></ruby><ruby>同<rt>ㄊㄨㄥˊ</rt></ruby><ruby>心<rt>ㄒㄧㄣ</rt></ruby><ruby>協<rt>ㄒㄧㄝˊ</rt></ruby><ruby>力<rt>ㄌㄧˋ</rt></ruby>，<ruby>相<rt>ㄒㄧㄤ</rt></ruby><ruby>信<rt>ㄒㄧㄣˋ</rt></ruby><ruby>明<rt>ㄇㄧㄥˊ</rt></ruby><ruby>天<rt>ㄊㄧㄢ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>定<rt>ㄉㄧㄥˋ</rt></ruby><ruby>能<rt>ㄋㄥˊ</rt></ruby><ruby>為<rt>ㄨㄟˋ</rt></ruby><ruby>班<rt>ㄅㄢ</rt></ruby><ruby>上<rt>ㄕㄤˋ</rt></ruby><ruby>爭<rt>ㄓㄥ</rt></ruby><ruby>光<rt>ㄍㄨㄤ</rt></ruby>。`,
+    vocab: [
+      { w:"分配", zy:"ㄈㄣ ㄆㄟˋ", type:"動詞", meaning:"按照一定的原則，把工作或物品分給大家", example:"老師分配每組的工作任務。" },
+      { w:"同心協力", zy:"ㄊㄨㄥˊ ㄒㄧㄣ ㄒㄧㄝˊ ㄌㄧˋ", type:"成語", meaning:"大家有共同目標，一起努力合作", example:"同心協力才能把困難的工作完成。" },
+      { w:"爭光", zy:"ㄓㄥ ㄍㄨㄤ", type:"動詞", meaning:"為自己或團體帶來榮譽、光榮", example:"他在比賽中得獎，為學校爭光。" }
+    ],
+    quiz: [
+      { q:"運動會前一天，班長做了什麼事？", opts:["帶大家去操場練習","為大家加油打氣","分配每位同學的工作","替選手準備制服"], ans:2, exp:"班長「分配每位同學的工作」。" },
+      { q:"下列哪一項不是同學負責的工作？", opts:["製作加油牌","準備道具","為選手加油打氣","安排比賽順序"], ans:3, exp:"文章提到製作加油牌、準備道具、為選手加油，沒有提到安排比賽順序。" },
+      { q:"「同心協力」最適合用在哪一種情況？", opts:["一個人獨自解決問題","大家有不同想法，互相爭吵","全班一起合作完成任務","只有班長一個人努力"], ans:2, exp:"同心協力是大家一起努力合作，目標相同的意思。" }
+    ]
+  },
+  {
+    id: 6, title: "打掃時間",
+    body: `<ruby>每<rt>ㄇㄟˇ</rt></ruby><ruby>天<rt>ㄊㄧㄢ</rt></ruby><ruby>放<rt>ㄈㄤˋ</rt></ruby><ruby>學<rt>ㄒㄩㄝˊ</rt></ruby><ruby>前<rt>ㄑㄧㄢˊ</rt></ruby>，<ruby>都<rt>ㄉㄡ</rt></ruby><ruby>是<rt>ㄕˋ</rt></ruby><ruby>打<rt>ㄉㄚˇ</rt></ruby><ruby>掃<rt>ㄙㄠˇ</rt></ruby><ruby>時<rt>ㄕˊ</rt></ruby><ruby>間<rt>ㄐㄧㄢ</rt></ruby>。<ruby>同<rt>ㄊㄨㄥˊ</rt></ruby><ruby>學<rt>ㄒㄩㄝˊ</rt></ruby><ruby>們<rt>ㄇㄣ</rt></ruby><ruby>分<rt>ㄈㄣ</rt></ruby><ruby>工<rt>ㄍㄨㄥ</rt></ruby><ruby>合<rt>ㄏㄜˊ</rt></ruby><ruby>作<rt>ㄗㄨㄛˋ</rt></ruby>，<ruby>有<rt>ㄧㄡˇ</rt></ruby><ruby>人<rt>ㄖㄣˊ</rt></ruby><ruby>掃<rt>ㄙㄠˇ</rt></ruby><ruby>地<rt>ㄉㄧˋ</rt></ruby>，<ruby>有<rt>ㄧㄡˇ</rt></ruby><ruby>人<rt>ㄖㄣˊ</rt></ruby><ruby>擦<rt>ㄘㄚ</rt></ruby><ruby>黑<rt>ㄏㄟ</rt></ruby><ruby>板<rt>ㄅㄢˇ</rt></ruby>，<ruby>有<rt>ㄧㄡˇ</rt></ruby><ruby>人<rt>ㄖㄣˊ</rt></ruby><ruby>倒<rt>ㄉㄠˋ</rt></ruby><ruby>垃<rt>ㄌㄜˋ</rt></ruby><ruby>圾<rt>ㄙㄜˋ</rt></ruby>。<ruby>阿<rt>ㄚ</rt></ruby><ruby>德<rt>ㄉㄜˊ</rt></ruby><ruby>最<rt>ㄗㄨㄟˋ</rt></ruby><ruby>認<rt>ㄖㄣˋ</rt></ruby><ruby>真<rt>ㄓㄣ</rt></ruby>，<ruby>他<rt>ㄊㄚ</rt></ruby><ruby>把<rt>ㄅㄚˇ</rt></ruby><ruby>桌<rt>ㄓㄨㄛ</rt></ruby><ruby>椅<rt>ㄧˇ</rt></ruby><ruby>底<rt>ㄉㄧˇ</rt></ruby><ruby>下<rt>ㄒㄧㄚˋ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>角<rt>ㄐㄧㄠˇ</rt></ruby><ruby>落<rt>ㄌㄨㄛˋ</rt></ruby><ruby>都<rt>ㄉㄡ</rt></ruby><ruby>清<rt>ㄑㄧㄥ</rt></ruby><ruby>掃<rt>ㄙㄠˇ</rt></ruby><ruby>得<rt>ㄉㄜˊ</rt></ruby><ruby>乾<rt>ㄍㄢ</rt></ruby><ruby>乾<rt>ㄍㄢ</rt></ruby><ruby>淨<rt>ㄐㄧㄥˋ</rt></ruby><ruby>淨<rt>ㄐㄧㄥˋ</rt></ruby>。<ruby>老<rt>ㄌㄠˇ</rt></ruby><ruby>師<rt>ㄕ</rt></ruby><ruby>巡<rt>ㄒㄩㄣˊ</rt></ruby><ruby>視<rt>ㄕˋ</rt></ruby><ruby>後<rt>ㄏㄡˋ</rt></ruby><ruby>點<rt>ㄉㄧㄢˇ</rt></ruby><ruby>頭<rt>ㄊㄡˊ</rt></ruby><ruby>稱<rt>ㄔㄥ</rt></ruby><ruby>讚<rt>ㄗㄢˋ</rt></ruby>：「<ruby>整<rt>ㄓㄥˇ</rt></ruby><ruby>潔<rt>ㄐㄧㄝˊ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>環<rt>ㄏㄨㄢˊ</rt></ruby><ruby>境<rt>ㄐㄧㄥˋ</rt></ruby>，<ruby>才<rt>ㄘㄞˊ</rt></ruby><ruby>有<rt>ㄧㄡˇ</rt></ruby><ruby>整<rt>ㄓㄥˇ</rt></ruby><ruby>潔<rt>ㄐㄧㄝˊ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>心<rt>ㄒㄧㄣ</rt></ruby><ruby>靈<rt>ㄌㄧㄥˊ</rt></ruby>。」`,
+    vocab: [
+      { w:"分工合作", zy:"ㄈㄣ ㄍㄨㄥ ㄏㄜˊ ㄗㄨㄛˋ", type:"成語", meaning:"各自負責不同的工作，共同完成任務", example:"做科展作業時，小組分工合作，效率很高。" },
+      { w:"巡視", zy:"ㄒㄩㄣˊ ㄕˋ", type:"動詞", meaning:"走動查看，確認各處是否正常", example:"校長巡視校園，確保學生安全。" },
+      { w:"整潔", zy:"ㄓㄥˇ ㄐㄧㄝˊ", type:"形容詞", meaning:"整齊乾淨，沒有雜亂或髒污", example:"保持書桌整潔，讀書時才能心情平靜。" }
+    ],
+    quiz: [
+      { q:"阿德打掃時，哪個地方清掃得特別乾淨？", opts:["窗戶玻璃","黑板","桌椅底下的角落","走廊地板"], ans:2, exp:"阿德把「桌椅底下的角落都清掃得乾乾淨淨」。" },
+      { q:"老師巡視後，說了什麼話？", opts:["打掃得不夠乾淨，要重做","整潔的環境，才有整潔的心靈","明天繼續努力","謝謝大家幫忙"], ans:1, exp:"老師說「整潔的環境，才有整潔的心靈」。" },
+      { q:"「分工合作」最重要的精神是什麼？", opts:["每個人只做自己喜歡的事","各負責不同工作，共同完成任務","一個人把所有工作都做完","比誰做得快"], ans:1, exp:"分工合作是「各自負責不同工作，共同完成任務」。" }
+    ]
+  },
+  {
+    id: 7, title: "好朋友",
+    body: `<ruby>小<rt>ㄒㄧㄠˇ</rt></ruby><ruby>雨<rt>ㄩˇ</rt></ruby><ruby>和<rt>ㄏㄢˋ</rt></ruby><ruby>小<rt>ㄒㄧㄠˇ</rt></ruby><ruby>晴<rt>ㄑㄧㄥˊ</rt></ruby><ruby>是<rt>ㄕˋ</rt></ruby><ruby>從<rt>ㄘㄨㄥˊ</rt></ruby><ruby>小<rt>ㄒㄧㄠˇ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>起<rt>ㄑㄧˇ</rt></ruby><ruby>長<rt>ㄓㄤˇ</rt></ruby><ruby>大<rt>ㄉㄚˋ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>好<rt>ㄏㄠˇ</rt></ruby><ruby>朋<rt>ㄆㄥˊ</rt></ruby><ruby>友<rt>ㄧㄡˇ</rt></ruby>，<ruby>她<rt>ㄊㄚ</rt></ruby><ruby>們<rt>ㄇㄣ</rt></ruby><ruby>上<rt>ㄕㄤˋ</rt></ruby><ruby>同<rt>ㄊㄨㄥˊ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>班<rt>ㄅㄢ</rt></ruby>，<ruby>也<rt>ㄧㄝˇ</rt></ruby><ruby>坐<rt>ㄗㄨㄛˋ</rt></ruby><ruby>同<rt>ㄊㄨㄥˊ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>排<rt>ㄆㄞˊ</rt></ruby>。<ruby>有<rt>ㄧㄡˇ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>天<rt>ㄊㄧㄢ</rt></ruby>，<ruby>小<rt>ㄒㄧㄠˇ</rt></ruby><ruby>雨<rt>ㄩˇ</rt></ruby><ruby>忘<rt>ㄨㄤˋ</rt></ruby><ruby>了<rt>ㄌㄜ</rt></ruby><ruby>帶<rt>ㄉㄞˋ</rt></ruby><ruby>橡<rt>ㄒㄧㄤˋ</rt></ruby><ruby>皮<rt>ㄆㄧˊ</rt></ruby><ruby>擦<rt>ㄘㄚ</rt></ruby>，<ruby>小<rt>ㄒㄧㄠˇ</rt></ruby><ruby>晴<rt>ㄑㄧㄥˊ</rt></ruby><ruby>立<rt>ㄌㄧˋ</rt></ruby><ruby>刻<rt>ㄎㄜˋ</rt></ruby><ruby>把<rt>ㄅㄚˇ</rt></ruby><ruby>自<rt>ㄗˋ</rt></ruby><ruby>己<rt>ㄐㄧˇ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>分<rt>ㄈㄣ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>半<rt>ㄅㄢˋ</rt></ruby><ruby>給<rt>ㄍㄟˇ</rt></ruby><ruby>她<rt>ㄊㄚ</rt></ruby>。<ruby>真<rt>ㄓㄣ</rt></ruby><ruby>正<rt>ㄓㄥˋ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>友<rt>ㄧㄡˇ</rt></ruby><ruby>誼<rt>ㄧˋ</rt></ruby>，<ruby>不<rt>ㄅㄨˋ</rt></ruby><ruby>需<rt>ㄒㄩ</rt></ruby><ruby>要<rt>ㄧㄠˋ</rt></ruby><ruby>用<rt>ㄩㄥˋ</rt></ruby><ruby>豪<rt>ㄏㄠˊ</rt></ruby><ruby>華<rt>ㄏㄨㄚˊ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>禮<rt>ㄌㄧˇ</rt></ruby><ruby>物<rt>ㄨˋ</rt></ruby><ruby>來<rt>ㄌㄞˊ</rt></ruby><ruby>證<rt>ㄓㄥˋ</rt></ruby><ruby>明<rt>ㄇㄧㄥˊ</rt></ruby>，<ruby>而<rt>ㄦˊ</rt></ruby><ruby>是<rt>ㄕˋ</rt></ruby><ruby>在<rt>ㄗㄞˋ</rt></ruby><ruby>對<rt>ㄉㄨㄟˋ</rt></ruby><ruby>方<rt>ㄈㄤ</rt></ruby><ruby>需<rt>ㄒㄩ</rt></ruby><ruby>要<rt>ㄧㄠˋ</rt></ruby><ruby>時<rt>ㄕˊ</rt></ruby>，<ruby>毫<rt>ㄏㄠˊ</rt></ruby><ruby>不<rt>ㄅㄨˋ</rt></ruby><ruby>猶<rt>ㄧㄡˊ</rt></ruby><ruby>豫<rt>ㄩˋ</rt></ruby><ruby>地<rt>ㄉㄧˋ</rt></ruby><ruby>伸<rt>ㄕㄣ</rt></ruby><ruby>出<rt>ㄔㄨ</rt></ruby><ruby>援<rt>ㄩㄢˊ</rt></ruby><ruby>手<rt>ㄕㄡˇ</rt></ruby>。`,
+    vocab: [
+      { w:"友誼", zy:"ㄧㄡˇ ㄧˋ", type:"名詞", meaning:"朋友之間深厚的感情", example:"多年的友誼讓他們像家人一樣。" },
+      { w:"毫不猶豫", zy:"ㄏㄠˊ ㄅㄨˋ ㄧㄡˊ ㄩˋ", type:"成語", meaning:"完全沒有遲疑，立刻果斷地做", example:"看見有人受傷，他毫不猶豫地上前幫忙。" },
+      { w:"援手", zy:"ㄩㄢˊ ㄕㄡˇ", type:"名詞", meaning:"幫助他人的行動或力量", example:"在她最困難的時候，朋友伸出了援手。" }
+    ],
+    quiz: [
+      { q:"小雨忘記帶什麼去學校？", opts:["鉛筆","橡皮擦","尺","課本"], ans:1, exp:"小雨「忘了帶橡皮擦」。" },
+      { q:"小晴怎麼幫助小雨？", opts:["幫她去借","自己不用，整個給她","把橡皮擦分一半給她","告訴老師"], ans:2, exp:"小晴「把自己的分一半給她」。" },
+      { q:"「毫不猶豫」的意思是？", opts:["非常害怕不敢行動","想了很久才決定","完全不遲疑，立刻行動","猶豫之後放棄了"], ans:2, exp:"毫不猶豫是完全沒有遲疑、立刻果斷行動的意思。" }
+    ]
+  },
+  {
+    id: 8, title: "班級幹部選舉",
+    body: `<ruby>學<rt>ㄒㄩㄝˊ</rt></ruby><ruby>期<rt>ㄑㄧ</rt></ruby><ruby>初<rt>ㄔㄨ</rt></ruby>，<ruby>班<rt>ㄅㄢ</rt></ruby><ruby>上<rt>ㄕㄤˋ</rt></ruby><ruby>舉<rt>ㄐㄩˇ</rt></ruby><ruby>行<rt>ㄒㄧㄥˊ</rt></ruby><ruby>幹<rt>ㄍㄢˋ</rt></ruby><ruby>部<rt>ㄅㄨˋ</rt></ruby><ruby>選<rt>ㄒㄩㄢˇ</rt></ruby><ruby>舉<rt>ㄐㄩˇ</rt></ruby>。<ruby>阿<rt>ㄚ</rt></ruby><ruby>強<rt>ㄑㄧㄤˊ</rt></ruby><ruby>自<rt>ㄗˋ</rt></ruby><ruby>願<rt>ㄩㄢˋ</rt></ruby><ruby>站<rt>ㄓㄢˋ</rt></ruby><ruby>上<rt>ㄕㄤˋ</rt></ruby><ruby>講<rt>ㄐㄧㄤˇ</rt></ruby><ruby>台<rt>ㄊㄞˊ</rt></ruby>，<ruby>清<rt>ㄑㄧㄥ</rt></ruby><ruby>楚<rt>ㄔㄨˇ</rt></ruby><ruby>說<rt>ㄕㄨㄛ</rt></ruby><ruby>出<rt>ㄔㄨ</rt></ruby><ruby>自<rt>ㄗˋ</rt></ruby><ruby>己<rt>ㄐㄧˇ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>政<rt>ㄓㄥˋ</rt></ruby><ruby>見<rt>ㄐㄧㄢˋ</rt></ruby>：<ruby>他<rt>ㄊㄚ</rt></ruby><ruby>承<rt>ㄔㄥˊ</rt></ruby><ruby>諾<rt>ㄋㄨㄛˋ</rt></ruby><ruby>要<rt>ㄧㄠˋ</rt></ruby><ruby>公<rt>ㄍㄨㄥ</rt></ruby><ruby>平<rt>ㄆㄧㄥˊ</rt></ruby><ruby>對<rt>ㄉㄨㄟˋ</rt></ruby><ruby>待<rt>ㄉㄞˋ</rt></ruby><ruby>每<rt>ㄇㄟˇ</rt></ruby><ruby>個<rt>ㄍㄜˋ</rt></ruby><ruby>同<rt>ㄊㄨㄥˊ</rt></ruby><ruby>學<rt>ㄒㄩㄝˊ</rt></ruby>，<ruby>積<rt>ㄐㄧ</rt></ruby><ruby>極<rt>ㄐㄧˊ</rt></ruby><ruby>解<rt>ㄐㄧㄝˇ</rt></ruby><ruby>決<rt>ㄐㄩㄝˊ</rt></ruby><ruby>問<rt>ㄨㄣˋ</rt></ruby><ruby>題<rt>ㄊㄧˊ</rt></ruby>。<ruby>同<rt>ㄊㄨㄥˊ</rt></ruby><ruby>學<rt>ㄒㄩㄝˊ</rt></ruby><ruby>們<rt>ㄇㄣ</rt></ruby><ruby>仔<rt>ㄗˇ</rt></ruby><ruby>細<rt>ㄒㄧˋ</rt></ruby><ruby>思<rt>ㄙ</rt></ruby><ruby>考<rt>ㄎㄠˇ</rt></ruby><ruby>後<rt>ㄏㄡˋ</rt></ruby>，<ruby>以<rt>ㄧˇ</rt></ruby><ruby>無<rt>ㄨˊ</rt></ruby><ruby>記<rt>ㄐㄧˋ</rt></ruby><ruby>名<rt>ㄇㄧㄥˊ</rt></ruby><ruby>投<rt>ㄊㄡˊ</rt></ruby><ruby>票<rt>ㄆㄧㄠˋ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>方<rt>ㄈㄤ</rt></ruby><ruby>式<rt>ㄕˋ</rt></ruby><ruby>選<rt>ㄒㄩㄢˇ</rt></ruby><ruby>出<rt>ㄔㄨ</rt></ruby><ruby>心<rt>ㄒㄧㄣ</rt></ruby><ruby>目<rt>ㄇㄨˋ</rt></ruby><ruby>中<rt>ㄓㄨㄥ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>人<rt>ㄖㄣˊ</rt></ruby><ruby>選<rt>ㄒㄩㄢˇ</rt></ruby>。<ruby>阿<rt>ㄚ</rt></ruby><ruby>強<rt>ㄑㄧㄤˊ</rt></ruby><ruby>以<rt>ㄧˇ</rt></ruby><ruby>高<rt>ㄍㄠ</rt></ruby><ruby>票<rt>ㄆㄧㄠˋ</rt></ruby><ruby>當<rt>ㄉㄤ</rt></ruby><ruby>選<rt>ㄒㄩㄢˇ</rt></ruby>，<ruby>他<rt>ㄊㄚ</rt></ruby><ruby>深<rt>ㄕㄣ</rt></ruby><ruby>吸<rt>ㄒㄧ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>口<rt>ㄎㄡˇ</rt></ruby><ruby>氣<rt>ㄑㄧˋ</rt></ruby>，<ruby>暗<rt>ㄢˋ</rt></ruby><ruby>自<rt>ㄗˋ</rt></ruby><ruby>下<rt>ㄒㄧㄚˋ</rt></ruby><ruby>定<rt>ㄉㄧㄥˋ</rt></ruby><ruby>決<rt>ㄐㄩㄝˊ</rt></ruby><ruby>心<rt>ㄒㄧㄣ</rt></ruby>，<ruby>不<rt>ㄅㄨˋ</rt></ruby><ruby>辜<rt>ㄍㄨ</rt></ruby><ruby>負<rt>ㄈㄨˋ</rt></ruby><ruby>大<rt>ㄉㄚˋ</rt></ruby><ruby>家<rt>ㄐㄧㄚ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>信<rt>ㄒㄧㄣˋ</rt></ruby><ruby>任<rt>ㄖㄣˋ</rt></ruby>。`,
+    vocab: [
+      { w:"政見", zy:"ㄓㄥˋ ㄐㄧㄢˋ", type:"名詞", meaning:"參選者對工作的想法與承諾", example:"選舉前，候選人要說明自己的政見。" },
+      { w:"無記名投票", zy:"ㄨˊ ㄐㄧˋ ㄇㄧㄥˊ ㄊㄡˊ ㄆㄧㄠˋ", type:"名詞", meaning:"投票時不寫自己名字，保護投票人的隱私", example:"班長選舉採用無記名投票，大家可以自由選擇。" },
+      { w:"辜負", zy:"ㄍㄨ ㄈㄨˋ", type:"動詞", meaning:"對不起別人的期望或信任", example:"他努力學習，不想辜負父母的期望。" }
+    ],
+    quiz: [
+      { q:"阿強在講台上說了什麼？", opts:["只說了自己的名字","說出自己的政見，承諾公平對待每個人","請大家投票給他，不說理由","介紹自己的家庭"], ans:1, exp:"阿強「清楚說出自己的政見」，承諾公平對待每個同學。" },
+      { q:"同學們用什麼方式投票？", opts:["舉手表決","大聲說出名字","無記名投票","請老師決定"], ans:2, exp:"同學用「無記名投票的方式」選出人選。" },
+      { q:"阿強當選後，心裡下了什麼決心？", opts:["要讓班上每次考試都得高分","不辜負大家的信任","讓班上天天玩遊戲","每天幫老師擦黑板"], ans:1, exp:"阿強暗自下定決心「不辜負大家的信任」。" }
+    ]
+  },
+  {
+    id: 9, title: "校外教學",
+    body: `<ruby>今<rt>ㄐㄧㄣ</rt></ruby><ruby>天<rt>ㄊㄧㄢ</rt></ruby><ruby>是<rt>ㄕˋ</rt></ruby><ruby>校<rt>ㄒㄧㄠˋ</rt></ruby><ruby>外<rt>ㄨㄞˋ</rt></ruby><ruby>教<rt>ㄐㄧㄠˋ</rt></ruby><ruby>學<rt>ㄒㄩㄝˊ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>日<rt>ㄖˋ</rt></ruby><ruby>子<rt>ㄗ</rt></ruby>，<ruby>全<rt>ㄑㄩㄢˊ</rt></ruby><ruby>班<rt>ㄅㄢ</rt></ruby><ruby>搭<rt>ㄉㄚ</rt></ruby><ruby>上<rt>ㄕㄤˋ</rt></ruby><ruby>遊<rt>ㄧㄡˊ</rt></ruby><ruby>覽<rt>ㄌㄢˇ</rt></ruby><ruby>車<rt>ㄔㄜ</rt></ruby><ruby>前<rt>ㄑㄧㄢˊ</rt></ruby><ruby>往<rt>ㄨㄤˇ</rt></ruby><ruby>科<rt>ㄎㄜ</rt></ruby><ruby>學<rt>ㄒㄩㄝˊ</rt></ruby><ruby>博<rt>ㄅㄛˊ</rt></ruby><ruby>物<rt>ㄨˋ</rt></ruby><ruby>館<rt>ㄍㄨㄢˇ</rt></ruby>。<ruby>館<rt>ㄍㄨㄢˇ</rt></ruby><ruby>內<rt>ㄋㄟˋ</rt></ruby><ruby>展<rt>ㄓㄢˇ</rt></ruby><ruby>示<rt>ㄕˋ</rt></ruby><ruby>了<rt>ㄌㄜ</rt></ruby><ruby>各<rt>ㄍㄜˋ</rt></ruby><ruby>種<rt>ㄓㄨㄥˇ</rt></ruby><ruby>令<rt>ㄌㄧㄥˋ</rt></ruby><ruby>人<rt>ㄖㄣˊ</rt></ruby><ruby>驚<rt>ㄐㄧㄥ</rt></ruby><ruby>奇<rt>ㄑㄧˊ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>科<rt>ㄎㄜ</rt></ruby><ruby>學<rt>ㄒㄩㄝˊ</rt></ruby><ruby>裝<rt>ㄓㄨㄤ</rt></ruby><ruby>置<rt>ㄓˋ</rt></ruby>，<ruby>大<rt>ㄉㄚˋ</rt></ruby><ruby>家<rt>ㄐㄧㄚ</rt></ruby><ruby>爭<rt>ㄓㄥ</rt></ruby><ruby>先<rt>ㄒㄧㄢ</rt></ruby><ruby>恐<rt>ㄎㄨㄥˇ</rt></ruby><ruby>後<rt>ㄏㄡˋ</rt></ruby><ruby>地<rt>ㄉㄧˋ</rt></ruby><ruby>動<rt>ㄉㄨㄥˋ</rt></ruby><ruby>手<rt>ㄕㄡˇ</rt></ruby><ruby>操<rt>ㄘㄠ</rt></ruby><ruby>作<rt>ㄗㄨㄛˋ</rt></ruby>。<ruby>導<rt>ㄉㄠˇ</rt></ruby><ruby>覽<rt>ㄌㄢˇ</rt></ruby><ruby>員<rt>ㄩㄢˊ</rt></ruby><ruby>解<rt>ㄐㄧㄝˇ</rt></ruby><ruby>說<rt>ㄕㄨㄛ</rt></ruby><ruby>每<rt>ㄇㄟˇ</rt></ruby><ruby>項<rt>ㄒㄧㄤˋ</rt></ruby><ruby>展<rt>ㄓㄢˇ</rt></ruby><ruby>品<rt>ㄆㄧㄣˇ</rt></ruby><ruby>背<rt>ㄅㄟˋ</rt></ruby><ruby>後<rt>ㄏㄡˋ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>原<rt>ㄩㄢˊ</rt></ruby><ruby>理<rt>ㄌㄧˇ</rt></ruby>，<ruby>大<rt>ㄉㄚˋ</rt></ruby><ruby>家<rt>ㄐㄧㄚ</rt></ruby><ruby>聽<rt>ㄊㄧㄥ</rt></ruby><ruby>得<rt>ㄉㄜˊ</rt></ruby><ruby>津<rt>ㄐㄧㄣ</rt></ruby><ruby>津<rt>ㄐㄧㄣ</rt></ruby><ruby>有<rt>ㄧㄡˇ</rt></ruby><ruby>味<rt>ㄨㄟˋ</rt></ruby>。<ruby>這<rt>ㄓㄜˋ</rt></ruby><ruby>次<rt>ㄘˋ</rt></ruby><ruby>校<rt>ㄒㄧㄠˋ</rt></ruby><ruby>外<rt>ㄨㄞˋ</rt></ruby><ruby>教<rt>ㄐㄧㄠˋ</rt></ruby><ruby>學<rt>ㄒㄩㄝˊ</rt></ruby>，<ruby>讓<rt>ㄖㄤˋ</rt></ruby><ruby>同<rt>ㄊㄨㄥˊ</rt></ruby><ruby>學<rt>ㄒㄩㄝˊ</rt></ruby><ruby>們<rt>ㄇㄣ</rt></ruby><ruby>深<rt>ㄕㄣ</rt></ruby><ruby>刻<rt>ㄎㄜˋ</rt></ruby><ruby>體<rt>ㄊㄧˇ</rt></ruby><ruby>會<rt>ㄏㄨㄟˋ</rt></ruby><ruby>到<rt>ㄉㄠˋ</rt></ruby>，<ruby>知<rt>ㄓ</rt></ruby><ruby>識<rt>ㄕˋ</rt></ruby><ruby>不<rt>ㄅㄨˋ</rt></ruby><ruby>只<rt>ㄓˇ</rt></ruby><ruby>在<rt>ㄗㄞˋ</rt></ruby><ruby>課<rt>ㄎㄜˋ</rt></ruby><ruby>本<rt>ㄅㄣˇ</rt></ruby><ruby>裡<rt>ㄌㄧˇ</rt></ruby>。`,
+    vocab: [
+      { w:"爭先恐後", zy:"ㄓㄥ ㄒㄧㄢ ㄎㄨㄥˇ ㄏㄡˋ", type:"成語", meaning:"大家搶著要第一，唯恐落在別人後面", example:"聽說有免費冰淇淋，孩子們爭先恐後地跑過去。" },
+      { w:"津津有味", zy:"ㄐㄧㄣ ㄐㄧㄣ ㄧㄡˇ ㄨㄟˋ", type:"成語", meaning:"形容非常有興趣，聽得或吃得很投入、很享受", example:"她津津有味地讀完那本偵探小說。" },
+      { w:"深刻", zy:"ㄕㄣ ㄎㄜˋ", type:"形容詞", meaning:"印象很強烈，難以忘記", example:"老師的那句話給他留下深刻的印象。" }
+    ],
+    quiz: [
+      { q:"全班去哪裡進行校外教學？", opts:["動物園","科學博物館","天文台","植物園"], ans:1, exp:"全班「前往科學博物館」。" },
+      { q:"「爭先恐後」是形容同學怎麼操作展品？", opts:["慢慢等待，不搶先","害怕展品，不敢靠近","大家搶著要第一個動手","一個人獨自操作，其他人旁觀"], ans:2, exp:"爭先恐後是大家搶著要第一，不願落後的意思。" },
+      { q:"這次校外教學讓同學體會到什麼？", opts:["科學很難學","知識不只在課本裡","博物館比學校有趣","導覽員比老師厲害"], ans:1, exp:"文章說同學「深刻體會到，知識不只在課本裡」。" }
+    ]
+  },
+  {
+    id: 10, title: "美術課",
+    body: `<ruby>美<rt>ㄇㄟˇ</rt></ruby><ruby>術<rt>ㄕㄨˋ</rt></ruby><ruby>課<rt>ㄎㄜˋ</rt></ruby><ruby>上<rt>ㄕㄤˋ</rt></ruby>，<ruby>老<rt>ㄌㄠˇ</rt></ruby><ruby>師<rt>ㄕ</rt></ruby><ruby>請<rt>ㄑㄧㄥˇ</rt></ruby><ruby>大<rt>ㄉㄚˋ</rt></ruby><ruby>家<rt>ㄐㄧㄚ</rt></ruby><ruby>用<rt>ㄩㄥˋ</rt></ruby><ruby>水<rt>ㄕㄨㄟˇ</rt></ruby><ruby>彩<rt>ㄘㄞˇ</rt></ruby><ruby>畫<rt>ㄏㄨㄚˋ</rt></ruby><ruby>出<rt>ㄔㄨ</rt></ruby><ruby>心<rt>ㄒㄧㄣ</rt></ruby><ruby>中<rt>ㄓㄨㄥ</rt></ruby><ruby>最<rt>ㄗㄨㄟˋ</rt></ruby><ruby>美<rt>ㄇㄟˇ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>風<rt>ㄈㄥ</rt></ruby><ruby>景<rt>ㄐㄧㄥˇ</rt></ruby>。<ruby>小<rt>ㄒㄧㄠˇ</rt></ruby><ruby>安<rt>ㄢ</rt></ruby><ruby>想<rt>ㄒㄧㄤˇ</rt></ruby><ruby>了<rt>ㄌㄜ</rt></ruby><ruby>很<rt>ㄏㄣˇ</rt></ruby><ruby>久<rt>ㄐㄧㄡˇ</rt></ruby>，<ruby>決<rt>ㄐㄩㄝˊ</rt></ruby><ruby>定<rt>ㄉㄧㄥˋ</rt></ruby><ruby>畫<rt>ㄏㄨㄚˋ</rt></ruby><ruby>家<rt>ㄐㄧㄚ</rt></ruby><ruby>門<rt>ㄇㄣˊ</rt></ruby><ruby>口<rt>ㄎㄡˇ</rt></ruby><ruby>那<rt>ㄋㄚˋ</rt></ruby><ruby>棵<rt>ㄎㄜ</rt></ruby><ruby>老<rt>ㄌㄠˇ</rt></ruby><ruby>榕<rt>ㄖㄨㄥˊ</rt></ruby><ruby>樹<rt>ㄕㄨˋ</rt></ruby>。<ruby>他<rt>ㄊㄚ</rt></ruby><ruby>小<rt>ㄒㄧㄠˇ</rt></ruby><ruby>心<rt>ㄒㄧㄣ</rt></ruby><ruby>翼<rt>ㄧˋ</rt></ruby><ruby>翼<rt>ㄧˋ</rt></ruby><ruby>地<rt>ㄉㄧˋ</rt></ruby><ruby>調<rt>ㄊㄧㄠˊ</rt></ruby><ruby>配<rt>ㄆㄟˋ</rt></ruby><ruby>顏<rt>ㄧㄢˊ</rt></ruby><ruby>色<rt>ㄙㄜˋ</rt></ruby>，<ruby>一<rt>ㄧ</rt></ruby><ruby>筆<rt>ㄅㄧˇ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>筆<rt>ㄅㄧˇ</rt></ruby><ruby>勾<rt>ㄍㄡ</rt></ruby><ruby>勒<rt>ㄌㄜˋ</rt></ruby><ruby>出<rt>ㄔㄨ</rt></ruby><ruby>榕<rt>ㄖㄨㄥˊ</rt></ruby><ruby>樹<rt>ㄕㄨˋ</rt></ruby><ruby>粗<rt>ㄘㄨ</rt></ruby><ruby>壯<rt>ㄓㄨㄤˋ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>枝<rt>ㄓ</rt></ruby><ruby>幹<rt>ㄍㄢˋ</rt></ruby>。<ruby>完<rt>ㄨㄢˊ</rt></ruby><ruby>成<rt>ㄔㄥˊ</rt></ruby><ruby>後<rt>ㄏㄡˋ</rt></ruby>，<ruby>老<rt>ㄌㄠˇ</rt></ruby><ruby>師<rt>ㄕ</rt></ruby><ruby>說<rt>ㄕㄨㄛ</rt></ruby>：「<ruby>這<rt>ㄓㄜˋ</rt></ruby><ruby>幅<rt>ㄈㄨˊ</rt></ruby><ruby>畫<rt>ㄏㄨㄚˋ</rt></ruby><ruby>不<rt>ㄅㄨˋ</rt></ruby><ruby>只<rt>ㄓˇ</rt></ruby><ruby>畫<rt>ㄏㄨㄚˋ</rt></ruby><ruby>出<rt>ㄔㄨ</rt></ruby><ruby>了<rt>ㄌㄜ</rt></ruby><ruby>樹<rt>ㄕㄨˋ</rt></ruby>，<ruby>更<rt>ㄍㄥˋ</rt></ruby><ruby>畫<rt>ㄏㄨㄚˋ</rt></ruby><ruby>出<rt>ㄔㄨ</rt></ruby><ruby>了<rt>ㄌㄜ</rt></ruby><ruby>你<rt>ㄋㄧˇ</rt></ruby><ruby>對<rt>ㄉㄨㄟˋ</rt></ruby><ruby>家<rt>ㄐㄧㄚ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>情<rt>ㄑㄧㄥˊ</rt></ruby><ruby>感<rt>ㄍㄢˇ</rt></ruby>。」`,
+    vocab: [
+      { w:"勾勒", zy:"ㄍㄡ ㄌㄜˋ", type:"動詞", meaning:"用線條描繪出輪廓或形狀", example:"畫家用幾筆就勾勒出山川的樣子。" },
+      { w:"小心翼翼", zy:"ㄒㄧㄠˇ ㄒㄧㄣ ㄧˋ ㄧˋ", type:"成語", meaning:"非常謹慎小心，不敢有一點大意", example:"他小心翼翼地捧著剛出爐的蛋糕。" },
+      { w:"情感", zy:"ㄑㄧㄥˊ ㄍㄢˇ", type:"名詞", meaning:"內心對人或事物的感覺與感情", example:"這首歌充滿了對故鄉的深厚情感。" }
+    ],
+    quiz: [
+      { q:"小安決定畫什麼？", opts:["學校的操場","海邊的日落","家門口的老榕樹","河邊的小船"], ans:2, exp:"小安「決定畫家門口那棵老榕樹」。" },
+      { q:"「小心翼翼」在文中是形容小安做什麼事？", opts:["走到老師面前","調配顏色","等待老師評語","清洗畫筆"], ans:1, exp:"小安「小心翼翼地調配顏色」。" },
+      { q:"老師說這幅畫畫出了什麼？", opts:["高超的繪畫技巧","小安對家的情感","榕樹的真實樣貌","水彩的各種顏色"], ans:1, exp:"老師說「這幅畫不只畫出了樹，更畫出了你對家的情感」。" }
+    ]
+  },
+  {
+    id: 11, title: "音樂課的歌聲",
+    body: `<ruby>音<rt>ㄧㄣ</rt></ruby><ruby>樂<rt>ㄩㄝˋ</rt></ruby><ruby>課<rt>ㄎㄜˋ</rt></ruby><ruby>上<rt>ㄕㄤˋ</rt></ruby>，<ruby>老<rt>ㄌㄠˇ</rt></ruby><ruby>師<rt>ㄕ</rt></ruby><ruby>帶<rt>ㄉㄞˋ</rt></ruby><ruby>著<rt>ㄓㄜ</rt></ruby><ruby>全<rt>ㄑㄩㄢˊ</rt></ruby><ruby>班<rt>ㄅㄢ</rt></ruby><ruby>練<rt>ㄌㄧㄢˋ</rt></ruby><ruby>唱<rt>ㄔㄤˋ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>首<rt>ㄕㄡˇ</rt></ruby><ruby>關<rt>ㄍㄨㄢ</rt></ruby><ruby>於<rt>ㄩˊ</rt></ruby><ruby>春<rt>ㄔㄨㄣ</rt></ruby><ruby>天<rt>ㄊㄧㄢ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>歌</ruby>。<ruby>起<rt>ㄑㄧˇ</rt></ruby><ruby>初<rt>ㄔㄨ</rt></ruby>，<ruby>大<rt>ㄉㄚˋ</rt></ruby><ruby>家<rt>ㄐㄧㄚ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>聲<rt>ㄕㄥ</rt></ruby><ruby>音<rt>ㄧㄣ</rt></ruby><ruby>高<rt>ㄍㄠ</rt></ruby><ruby>低<rt>ㄉㄧ</rt></ruby><ruby>不<rt>ㄅㄨˋ</rt></ruby><ruby>齊<rt>ㄑㄧˊ</rt></ruby>，<ruby>老<rt>ㄌㄠˇ</rt></ruby><ruby>師<rt>ㄕ</rt></ruby><ruby>耐<rt>ㄋㄞˋ</rt></ruby><ruby>心<rt>ㄒㄧㄣ</rt></ruby><ruby>地<rt>ㄉㄧˋ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>遍<rt>ㄅㄧㄢˋ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>遍<rt>ㄅㄧㄢˋ</rt></ruby><ruby>指<rt>ㄓˇ</rt></ruby><ruby>導<rt>ㄉㄠˇ</rt></ruby>。<ruby>練<rt>ㄌㄧㄢˋ</rt></ruby><ruby>習<rt>ㄒㄧˊ</rt></ruby><ruby>了<rt>ㄌㄜ</rt></ruby><ruby>幾<rt>ㄐㄧˇ</rt></ruby><ruby>遍<rt>ㄅㄧㄢˋ</rt></ruby><ruby>之<rt>ㄓ</rt></ruby><ruby>後<rt>ㄏㄡˋ</rt></ruby>，<ruby>大<rt>ㄉㄚˋ</rt></ruby><ruby>家<rt>ㄐㄧㄚ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>歌<rt>ㄍㄜ</rt></ruby><ruby>聲<rt>ㄕㄥ</rt></ruby><ruby>漸<rt>ㄐㄧㄢˋ</rt></ruby><ruby>漸<rt>ㄐㄧㄢˋ</rt></ruby><ruby>和<rt>ㄏㄜˊ</rt></ruby><ruby>諧<rt>ㄒㄧㄝˊ</rt></ruby><ruby>起<rt>ㄑㄧˇ</rt></ruby><ruby>來<rt>ㄌㄞˊ</rt></ruby>，<ruby>像<rt>ㄒㄧㄤˋ</rt></ruby><ruby>是<rt>ㄕˋ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>片<rt>ㄆㄧㄢˋ</rt></ruby><ruby>春<rt>ㄔㄨㄣ</rt></ruby><ruby>日<rt>ㄖˋ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>微<rt>ㄨㄟ</rt></ruby><ruby>風<rt>ㄈㄥ</rt></ruby><ruby>飄<rt>ㄆㄧㄠ</rt></ruby><ruby>進<rt>ㄐㄧㄣˋ</rt></ruby><ruby>了<rt>ㄌㄜ</rt></ruby><ruby>教<rt>ㄐㄧㄠˋ</rt></ruby><ruby>室<rt>ㄕˋ</rt></ruby>。`,
+    vocab: [
+      { w:"高低不齊", zy:"ㄍㄠ ㄉㄧ ㄅㄨˋ ㄑㄧˊ", type:"成語", meaning:"高的高、低的低，參差不齊，沒有整齊劃一", example:"大家第一次合唱，聲音高低不齊，需要多練習。" },
+      { w:"耐心", zy:"ㄋㄞˋ ㄒㄧㄣ", type:"名詞/形容詞", meaning:"不急不躁、有足夠的忍耐力去做一件事", example:"教小孩需要很大的耐心。" },
+      { w:"和諧", zy:"ㄏㄜˊ ㄒㄧㄝˊ", type:"形容詞", meaning:"配合協調、沒有衝突，聽起來舒服順耳", example:"兩種樂器搭配得很和諧，聽起來非常美妙。" }
+    ],
+    quiz: [
+      { q:"一開始大家唱歌時，聲音有什麼問題？", opts:["太小聲，聽不清楚","高低不齊，不整齊","忘記歌詞，唱錯了","唱太快，跟不上節奏"], ans:1, exp:"一開始「大家的聲音高低不齊」。" },
+      { q:"老師怎麼幫大家改善？", opts:["讓大家各自練習","換一首比較簡單的歌","耐心地一遍一遍指導","讓唱得好的同學示範"], ans:2, exp:"老師「耐心地一遍一遍指導」大家。" },
+      { q:"文章最後用什麼來比喻和諧的歌聲？", opts:["夏日的陣雨","冬天的暖陽","春日的微風飄進教室","秋天落葉的聲音"], ans:2, exp:"文章說歌聲「像是一片春日的微風飄進了教室」。" }
+    ]
+  },
+  {
+    id: 12, title: "體育課",
+    body: `<ruby>體<rt>ㄊㄧˇ</rt></ruby><ruby>育<rt>ㄩˋ</rt></ruby><ruby>課<rt>ㄎㄜˋ</rt></ruby><ruby>是<rt>ㄕˋ</rt></ruby><ruby>大<rt>ㄉㄚˋ</rt></ruby><ruby>多<rt>ㄉㄨㄛ</rt></ruby><ruby>數<rt>ㄕㄨˋ</rt></ruby><ruby>同<rt>ㄊㄨㄥˊ</rt></ruby><ruby>學<rt>ㄒㄩㄝˊ</rt></ruby><ruby>最<rt>ㄗㄨㄟˋ</rt></ruby><ruby>期<rt>ㄑㄧ</rt></ruby><ruby>待<rt>ㄉㄞˋ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>課<rt>ㄎㄜˋ</rt></ruby>。<ruby>老<rt>ㄌㄠˇ</rt></ruby><ruby>師<rt>ㄕ</rt></ruby><ruby>先<rt>ㄒㄧㄢ</rt></ruby><ruby>帶<rt>ㄉㄞˋ</rt></ruby><ruby>大<rt>ㄉㄚˋ</rt></ruby><ruby>家<rt>ㄐㄧㄚ</rt></ruby><ruby>做<rt>ㄗㄨㄛˋ</rt></ruby><ruby>熱<rt>ㄖㄜˋ</rt></ruby><ruby>身<rt>ㄕㄣ</rt></ruby><ruby>操<rt>ㄘㄠ</rt></ruby>，<ruby>再<rt>ㄗㄞˋ</rt></ruby><ruby>分<rt>ㄈㄣ</rt></ruby><ruby>組<rt>ㄗㄨˇ</rt></ruby><ruby>進<rt>ㄐㄧㄣˋ</rt></ruby><ruby>行<rt>ㄒㄧㄥˊ</rt></ruby><ruby>接<rt>ㄐㄧㄝ</rt></ruby><ruby>力<rt>ㄌㄧˋ</rt></ruby><ruby>賽<rt>ㄙㄞˋ</rt></ruby><ruby>跑<rt>ㄆㄠˇ</rt></ruby>。<ruby>每<rt>ㄇㄟˇ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>棒<rt>ㄅㄤˋ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>選<rt>ㄒㄩㄢˇ</rt></ruby><ruby>手<rt>ㄕㄡˇ</rt></ruby><ruby>都<rt>ㄉㄡ</rt></ruby><ruby>全<rt>ㄑㄩㄢˊ</rt></ruby><ruby>力<rt>ㄌㄧˋ</rt></ruby><ruby>衝<rt>ㄔㄨㄥ</rt></ruby><ruby>刺<rt>ㄘˋ</rt></ruby>，<ruby>交<rt>ㄐㄧㄠ</rt></ruby><ruby>棒<rt>ㄅㄤˋ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>瞬<rt>ㄕㄨㄣˋ</rt></ruby><ruby>間<rt>ㄐㄧㄢ</rt></ruby><ruby>考<rt>ㄎㄠˇ</rt></ruby><ruby>驗<rt>ㄧㄢˋ</rt></ruby><ruby>著<rt>ㄓㄜ</rt></ruby><ruby>默<rt>ㄇㄛˋ</rt></ruby><ruby>契<rt>ㄑㄧˋ</rt></ruby>。<ruby>最<rt>ㄗㄨㄟˋ</rt></ruby><ruby>後<rt>ㄏㄡˋ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>棒<rt>ㄅㄤˋ</rt></ruby><ruby>衝<rt>ㄔㄨㄥ</rt></ruby><ruby>過<rt>ㄍㄨㄛˋ</rt></ruby><ruby>終<rt>ㄓㄨㄥ</rt></ruby><ruby>點<rt>ㄉㄧㄢˇ</rt></ruby><ruby>線<rt>ㄒㄧㄢˋ</rt></ruby>，<ruby>全<rt>ㄑㄩㄢˊ</rt></ruby><ruby>組<rt>ㄗㄨˇ</rt></ruby><ruby>爆<rt>ㄅㄠˋ</rt></ruby><ruby>出<rt>ㄔㄨ</rt></ruby><ruby>歡<rt>ㄏㄨㄢ</rt></ruby><ruby>呼<rt>ㄏㄨ</rt></ruby><ruby>聲<rt>ㄕㄥ</rt></ruby>，<ruby>那<rt>ㄋㄚˋ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>刻<rt>ㄎㄜˋ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>喜<rt>ㄒㄧˇ</rt></ruby><ruby>悅<rt>ㄩㄝˋ</rt></ruby><ruby>是<rt>ㄕˋ</rt></ruby><ruby>大<rt>ㄉㄚˋ</rt></ruby><ruby>家<rt>ㄐㄧㄚ</rt></ruby><ruby>共<rt>ㄍㄨㄥˋ</rt></ruby><ruby>同<rt>ㄊㄨㄥˊ</rt></ruby><ruby>努<rt>ㄋㄨˇ</rt></ruby><ruby>力<rt>ㄌㄧˋ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>果<rt>ㄍㄨㄛˇ</rt></ruby><ruby>實<rt>ㄕˊ</rt></ruby>。`,
+    vocab: [
+      { w:"衝刺", zy:"ㄔㄨㄥ ㄘˋ", type:"動詞", meaning:"用最快的速度向前跑，全力以赴", example:"快到終點了，他奮力衝刺，取得第一名。" },
+      { w:"默契", zy:"ㄇㄛˋ ㄑㄧˋ", type:"名詞", meaning:"彼此不需要說話就能互相配合的感覺", example:"他們兩個搭檔多年，默契十足。" },
+      { w:"果實", zy:"ㄍㄨㄛˇ ㄕˊ", type:"名詞", meaning:"努力之後得到的成果或收穫", example:"辛苦耕耘之後，終於收穫甜美的果實。" }
+    ],
+    quiz: [
+      { q:"體育課先做什麼，再進行比賽？", opts:["先跑一圈操場","先做熱身操","先討論戰術","先選隊長"], ans:1, exp:"老師「先帶大家做熱身操，再分組進行接力賽跑」。" },
+      { q:"「交棒的瞬間考驗著默契」，「默契」是指什麼？", opts:["誰跑得最快","互相不需說話就能配合","誰的力氣最大","誰最先到終點"], ans:1, exp:"默契是「彼此不需說話就能互相配合」的感覺。" },
+      { q:"最後一棒衝過終點後，大家有什麼反應？", opts:["安靜等待成績","爆出歡呼聲","互相道謝","問老師誰贏了"], ans:1, exp:"「全組爆出歡呼聲」，大家非常興奮。" }
+    ]
+  },
+  {
+    id: 13, title: "數學難題",
+    body: `<ruby>今<rt>ㄐㄧㄣ</rt></ruby><ruby>天<rt>ㄊㄧㄢ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>數<rt>ㄕㄨˋ</rt></ruby><ruby>學<rt>ㄒㄩㄝˊ</rt></ruby><ruby>課<rt>ㄎㄜˋ</rt></ruby><ruby>出<rt>ㄔㄨ</rt></ruby><ruby>現<rt>ㄒㄧㄢˋ</rt></ruby><ruby>了<rt>ㄌㄜ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>道<rt>ㄉㄠˋ</rt></ruby><ruby>讓<rt>ㄖㄤˋ</rt></ruby><ruby>大<rt>ㄉㄚˋ</rt></ruby><ruby>家<rt>ㄐㄧㄚ</rt></ruby><ruby>百<rt>ㄅㄞˇ</rt></ruby><ruby>思<rt>ㄙ</rt></ruby><ruby>不<rt>ㄅㄨˋ</rt></ruby><ruby>解<rt>ㄐㄧㄝˇ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>難<rt>ㄋㄢˊ</rt></ruby><ruby>題<rt>ㄊㄧˊ</rt></ruby>。<ruby>小<rt>ㄒㄧㄠˇ</rt></ruby><ruby>智<rt>ㄓˋ</rt></ruby><ruby>皺<rt>ㄓㄡˋ</rt></ruby><ruby>著<rt>ㄓㄜ</rt></ruby><ruby>眉<rt>ㄇㄟˊ</rt></ruby><ruby>頭<rt>ㄊㄡˊ</rt></ruby><ruby>想<rt>ㄒㄧㄤˇ</rt></ruby><ruby>了<rt>ㄌㄜ</rt></ruby><ruby>許<rt>ㄒㄩˇ</rt></ruby><ruby>久<rt>ㄐㄧㄡˇ</rt></ruby>，<ruby>試<rt>ㄕˋ</rt></ruby><ruby>了<rt>ㄌㄜ</rt></ruby><ruby>好<rt>ㄏㄠˇ</rt></ruby><ruby>幾<rt>ㄐㄧˇ</rt></ruby><ruby>種<rt>ㄓㄨㄥˇ</rt></ruby><ruby>方<rt>ㄈㄤ</rt></ruby><ruby>法<rt>ㄈㄚˇ</rt></ruby>，<ruby>每<rt>ㄇㄟˇ</rt></ruby><ruby>次<rt>ㄘˋ</rt></ruby><ruby>都<rt>ㄉㄡ</rt></ruby><ruby>失<rt>ㄕ</rt></ruby><ruby>敗<rt>ㄅㄞˋ</rt></ruby>。<ruby>他<rt>ㄊㄚ</rt></ruby><ruby>沒<rt>ㄇㄟˊ</rt></ruby><ruby>有<rt>ㄧㄡˇ</rt></ruby><ruby>放<rt>ㄈㄤˋ</rt></ruby><ruby>棄<rt>ㄑㄧˋ</rt></ruby>，<ruby>重<rt>ㄔㄨㄥˊ</rt></ruby><ruby>新<rt>ㄒㄧㄣ</rt></ruby><ruby>整<rt>ㄓㄥˇ</rt></ruby><ruby>理<rt>ㄌㄧˇ</rt></ruby><ruby>思<rt>ㄙ</rt></ruby><ruby>路<rt>ㄌㄨˋ</rt></ruby>，<ruby>終<rt>ㄓㄨㄥ</rt></ruby><ruby>於<rt>ㄩˊ</rt></ruby><ruby>在<rt>ㄗㄞˋ</rt></ruby><ruby>黑<rt>ㄏㄟ</rt></ruby><ruby>板<rt>ㄅㄢˇ</rt></ruby><ruby>上<rt>ㄕㄤˋ</rt></ruby><ruby>寫<rt>ㄒㄧㄝˇ</rt></ruby><ruby>出<rt>ㄔㄨ</rt></ruby><ruby>正<rt>ㄓㄥˋ</rt></ruby><ruby>確<rt>ㄑㄩㄝˋ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>解<rt>ㄐㄧㄝˇ</rt></ruby><ruby>答<rt>ㄉㄚˊ</rt></ruby>，<ruby>全<rt>ㄑㄩㄢˊ</rt></ruby><ruby>班<rt>ㄅㄢ</rt></ruby><ruby>響<rt>ㄒㄧㄤˇ</rt></ruby><ruby>起<rt>ㄑㄧˇ</rt></ruby><ruby>熱<rt>ㄖㄜˋ</rt></ruby><ruby>烈<rt>ㄌㄧㄝˋ</rt></ruby><ruby>掌<rt>ㄓㄤˇ</rt></ruby><ruby>聲<rt>ㄕㄥ</rt></ruby>。`,
+    vocab: [
+      { w:"百思不解", zy:"ㄅㄞˇ ㄙ ㄅㄨˋ ㄐㄧㄝˇ", type:"成語", meaning:"想了很多次都想不通，無法理解", example:"這道謎題讓他百思不解，一直找不到答案。" },
+      { w:"思路", zy:"ㄙ ㄌㄨˋ", type:"名詞", meaning:"思考的方向與脈絡", example:"老師的提示幫她理清了思路，很快就解出題目。" },
+      { w:"解答", zy:"ㄐㄧㄝˇ ㄉㄚˊ", type:"名詞/動詞", meaning:"解釋並回答問題的答案或過程", example:"他在黑板上寫出解答，讓大家恍然大悟。" }
+    ],
+    quiz: [
+      { q:"小智面對難題的第一個反應是什麼？", opts:["馬上問老師","放棄這道題","皺著眉頭想了許久，試了好幾種方法","請同學幫忙"], ans:2, exp:"小智「皺著眉頭想了許久，試了好幾種方法」。" },
+      { q:"小智每次嘗試都失敗後，他怎麼做？", opts:["放棄，等老師公布答案","哭著告訴老師","重新整理思路，繼續嘗試","問旁邊的同學"], ans:2, exp:"小智「沒有放棄，重新整理思路」，最終解出答案。" },
+      { q:"「百思不解」中「百思」的意思是？", opts:["很聰明地想","一百個人一起想","想了很多次、非常努力地想","只想了一次"], ans:2, exp:"「百思」是「想了很多次」的意思，強調非常努力地思考。" }
+    ]
+  },
+  {
+    id: 14, title: "值日生",
+    body: `<ruby>輪<rt>ㄌㄨㄣˊ</rt></ruby><ruby>到<rt>ㄉㄠˋ</rt></ruby><ruby>小<rt>ㄒㄧㄠˇ</rt></ruby><ruby>恩<rt>ㄣ</rt></ruby><ruby>擔<rt>ㄉㄢ</rt></ruby><ruby>任<rt>ㄖㄣˋ</rt></ruby><ruby>值<rt>ㄓˊ</rt></ruby><ruby>日<rt>ㄖˋ</rt></ruby><ruby>生<rt>ㄕㄥ</rt></ruby><ruby>了<rt>ㄌㄜ</rt></ruby>。<ruby>她<rt>ㄊㄚ</rt></ruby><ruby>比<rt>ㄅㄧˇ</rt></ruby><ruby>平<rt>ㄆㄧㄥˊ</rt></ruby><ruby>常<rt>ㄔㄤˊ</rt></ruby><ruby>早<rt>ㄗㄠˇ</rt></ruby><ruby>到<rt>ㄉㄠˋ</rt></ruby><ruby>教<rt>ㄐㄧㄠˋ</rt></ruby><ruby>室<rt>ㄕˋ</rt></ruby>，<ruby>把<rt>ㄅㄚˇ</rt></ruby><ruby>黑<rt>ㄏㄟ</rt></ruby><ruby>板<rt>ㄅㄢˇ</rt></ruby><ruby>擦<rt>ㄘㄚ</rt></ruby><ruby>乾<rt>ㄍㄢ</rt></ruby><ruby>淨<rt>ㄐㄧㄥˋ</rt></ruby>，<ruby>把<rt>ㄅㄚˇ</rt></ruby><ruby>掃<rt>ㄙㄠˇ</rt></ruby><ruby>具<rt>ㄐㄩˋ</rt></ruby><ruby>擺<rt>ㄅㄞˇ</rt></ruby><ruby>放<rt>ㄈㄤˋ</rt></ruby><ruby>整<rt>ㄓㄥˇ</rt></ruby><ruby>齊<rt>ㄑㄧˊ</rt></ruby>，<ruby>還<rt>ㄏㄞˊ</rt></ruby><ruby>在<rt>ㄗㄞˋ</rt></ruby><ruby>黑<rt>ㄏㄟ</rt></ruby><ruby>板<rt>ㄅㄢˇ</rt></ruby><ruby>上<rt>ㄕㄤˋ</rt></ruby><ruby>寫<rt>ㄒㄧㄝˇ</rt></ruby><ruby>下<rt>ㄒㄧㄚˋ</rt></ruby><ruby>今<rt>ㄐㄧㄣ</rt></ruby><ruby>天<rt>ㄊㄧㄢ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>日<rt>ㄖˋ</rt></ruby><ruby>期<rt>ㄑㄧ</rt></ruby><ruby>和<rt>ㄏㄢˋ</rt></ruby><ruby>天<rt>ㄊㄧㄢ</rt></ruby><ruby>氣<rt>ㄑㄧˋ</rt></ruby>。<ruby>當<rt>ㄉㄤ</rt></ruby><ruby>同<rt>ㄊㄨㄥˊ</rt></ruby><ruby>學<rt>ㄒㄩㄝˊ</rt></ruby><ruby>們<rt>ㄇㄣ</rt></ruby><ruby>陸<rt>ㄌㄨˋ</rt></ruby><ruby>續<rt>ㄒㄩˋ</rt></ruby><ruby>走<rt>ㄗㄡˇ</rt></ruby><ruby>進<rt>ㄐㄧㄣˋ</rt></ruby><ruby>教<rt>ㄐㄧㄠˋ</rt></ruby><ruby>室<rt>ㄕˋ</rt></ruby>，<ruby>看<rt>ㄎㄢˋ</rt></ruby><ruby>到<rt>ㄉㄠˋ</rt></ruby><ruby>整<rt>ㄓㄥˇ</rt></ruby><ruby>潔<rt>ㄐㄧㄝˊ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>環<rt>ㄏㄨㄢˊ</rt></ruby><ruby>境<rt>ㄐㄧㄥˋ</rt></ruby>，<ruby>紛<rt>ㄈㄣ</rt></ruby><ruby>紛<rt>ㄈㄣ</rt></ruby><ruby>向<rt>ㄒㄧㄤˋ</rt></ruby><ruby>小<rt>ㄒㄧㄠˇ</rt></ruby><ruby>恩<rt>ㄣ</rt></ruby><ruby>道<rt>ㄉㄠˋ</rt></ruby><ruby>謝<rt>ㄒㄧㄝˋ</rt></ruby>，<ruby>小<rt>ㄒㄧㄠˇ</rt></ruby><ruby>恩<rt>ㄣ</rt></ruby><ruby>心<rt>ㄒㄧㄣ</rt></ruby><ruby>裡<rt>ㄌㄧˇ</rt></ruby><ruby>充<rt>ㄔㄨㄥ</rt></ruby><ruby>滿<rt>ㄇㄢˇ</rt></ruby><ruby>了<rt>ㄌㄜ</rt></ruby><ruby>成<rt>ㄔㄥˊ</rt></ruby><ruby>就<rt>ㄐㄧㄡˋ</rt></ruby><ruby>感<rt>ㄍㄢˇ</rt></ruby>。`,
+    vocab: [
+      { w:"陸續", zy:"ㄌㄨˋ ㄒㄩˋ", type:"副詞", meaning:"一個接一個，連續不斷地", example:"運動會結束後，同學們陸續回到教室。" },
+      { w:"紛紛", zy:"ㄈㄣ ㄈㄣ", type:"副詞", meaning:"許多人或事接連地、一個接一個地", example:"聽到下課鈴聲，同學們紛紛站起來伸懶腰。" },
+      { w:"成就感", zy:"ㄔㄥˊ ㄐㄧㄡˋ ㄍㄢˇ", type:"名詞", meaning:"完成一件事後，內心感到滿足和自豪的感覺", example:"幫助別人解決問題，讓她充滿成就感。" }
+    ],
+    quiz: [
+      { q:"小恩擔任值日生時，做了哪些事？（選最完整的）", opts:["只擦了黑板","擦黑板、擺掃具、寫日期和天氣","打掃整個走廊","幫同學整理書桌"], ans:1, exp:"小恩「擦黑板、把掃具擺整齊、寫日期和天氣」，三件事都做了。" },
+      { q:"同學進教室後，對小恩有什麼反應？", opts:["問她黑板上寫什麼","紛紛向她道謝","請她繼續打掃","沒有特別反應"], ans:1, exp:"同學們「紛紛向小恩道謝」。" },
+      { q:"「成就感」是什麼感覺？", opts:["做完事情感到非常疲憊","完成任務後，心裡滿足、自豪","被人稱讚時感到不好意思","做錯事情後很後悔"], ans:1, exp:"成就感是「完成一件事後，內心感到滿足和自豪」的感覺。" }
+    ]
+  },
+  {
+    id: 15, title: "自然課的驚喜",
+    body: `<ruby>自<rt>ㄗˋ</rt></ruby><ruby>然<rt>ㄖㄢˊ</rt></ruby><ruby>課<rt>ㄎㄜˋ</rt></ruby><ruby>老<rt>ㄌㄠˇ</rt></ruby><ruby>師<rt>ㄕ</rt></ruby><ruby>帶<rt>ㄉㄞˋ</rt></ruby><ruby>來<rt>ㄌㄞˊ</rt></ruby><ruby>了<rt>ㄌㄜ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>個<rt>ㄍㄜˋ</rt></ruby><ruby>裝<rt>ㄓㄨㄤ</rt></ruby><ruby>著<rt>ㄓㄜ</rt></ruby><ruby>泥<rt>ㄋㄧˊ</rt></ruby><ruby>土<rt>ㄊㄨˇ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>小<rt>ㄒㄧㄠˇ</rt></ruby><ruby>盆<rt>ㄆㄣˊ</rt></ruby><ruby>子<rt>ㄗ</rt></ruby>，<ruby>裡<rt>ㄌㄧˇ</rt></ruby><ruby>面<rt>ㄇㄧㄢˋ</rt></ruby><ruby>種<rt>ㄓㄨㄥˋ</rt></ruby><ruby>著<rt>ㄓㄜ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>粒<rt>ㄌㄧˋ</rt></ruby><ruby>小<rt>ㄒㄧㄠˇ</rt></ruby><ruby>種<rt>ㄓㄨㄥˇ</rt></ruby><ruby>子<rt>ㄗ</rt></ruby>。<ruby>老<rt>ㄌㄠˇ</rt></ruby><ruby>師<rt>ㄕ</rt></ruby><ruby>說<rt>ㄕㄨㄛ</rt></ruby>，<ruby>只<rt>ㄓˇ</rt></ruby><ruby>要<rt>ㄧㄠˋ</rt></ruby><ruby>每<rt>ㄇㄟˇ</rt></ruby><ruby>天<rt>ㄊㄧㄢ</rt></ruby><ruby>澆<rt>ㄐㄧㄠ</rt></ruby><ruby>水<rt>ㄕㄨㄟˇ</rt></ruby>、<ruby>給<rt>ㄍㄟˇ</rt></ruby><ruby>予<rt>ㄩˇ</rt></ruby><ruby>適<rt>ㄕˋ</rt></ruby><ruby>當<rt>ㄉㄤˋ</rt></ruby><ruby>陽<rt>ㄧㄤˊ</rt></ruby><ruby>光<rt>ㄍㄨㄤ</rt></ruby>，<ruby>種<rt>ㄓㄨㄥˇ</rt></ruby><ruby>子<rt>ㄗ</rt></ruby><ruby>就<rt>ㄐㄧㄡˋ</rt></ruby><ruby>會<rt>ㄏㄨㄟˋ</rt></ruby><ruby>慢<rt>ㄇㄢˋ</rt></ruby><ruby>慢<rt>ㄇㄢˋ</rt></ruby><ruby>發<rt>ㄈㄚ</rt></ruby><ruby>芽<rt>ㄧㄚˊ</rt></ruby><ruby>生<rt>ㄕㄥ</rt></ruby><ruby>長<rt>ㄓㄤˇ</rt></ruby>。<ruby>三<rt>ㄙㄢ</rt></ruby><ruby>週<rt>ㄓㄡ</rt></ruby><ruby>後<rt>ㄏㄡˋ</rt></ruby>，<ruby>小<rt>ㄒㄧㄠˇ</rt></ruby><ruby>綠<rt>ㄌㄩˋ</rt></ruby><ruby>芽<rt>ㄧㄚˊ</rt></ruby><ruby>真<rt>ㄓㄣ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>冒<rt>ㄇㄠˋ</rt></ruby><ruby>出<rt>ㄔㄨ</rt></ruby><ruby>來<rt>ㄌㄞˊ</rt></ruby><ruby>了<rt>ㄌㄜ</rt></ruby>！<ruby>同<rt>ㄊㄨㄥˊ</rt></ruby><ruby>學<rt>ㄒㄩㄝˊ</rt></ruby><ruby>們<rt>ㄇㄣ</rt></ruby><ruby>驚<rt>ㄐㄧㄥ</rt></ruby><ruby>喜<rt>ㄒㄧˇ</rt></ruby><ruby>地<rt>ㄉㄧˋ</rt></ruby><ruby>圍<rt>ㄨㄟˊ</rt></ruby><ruby>著<rt>ㄓㄜ</rt></ruby><ruby>小<rt>ㄒㄧㄠˇ</rt></ruby><ruby>盆<rt>ㄆㄣˊ</rt></ruby><ruby>栽<rt>ㄗㄞ</rt></ruby><ruby>觀<rt>ㄍㄨㄢ</rt></ruby><ruby>察<rt>ㄔㄚˊ</rt></ruby>，<ruby>親<rt>ㄑㄧㄣ</rt></ruby><ruby>眼<rt>ㄧㄢˇ</rt></ruby><ruby>目<rt>ㄇㄨˋ</rt></ruby><ruby>睹<rt>ㄉㄨˇ</rt></ruby><ruby>生<rt>ㄕㄥ</rt></ruby><ruby>命<rt>ㄇㄧㄥˋ</rt></ruby><ruby>萌<rt>ㄇㄥˊ</rt></ruby><ruby>芽<rt>ㄧㄚˊ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>奇<rt>ㄑㄧˊ</rt></ruby><ruby>蹟<rt>ㄐㄧˋ</rt></ruby>。`,
+    vocab: [
+      { w:"給予", zy:"ㄍㄟˇ ㄩˇ", type:"動詞", meaning:"給與、提供某人或某物所需要的東西", example:"老師給予學生充分的時間思考問題。" },
+      { w:"親眼目睹", zy:"ㄑㄧㄣ ㄧㄢˇ ㄇㄨˋ ㄉㄨˇ", type:"成語", meaning:"用自己的眼睛親自看到，不是聽說或轉述", example:"他親眼目睹了流星劃過天空。" },
+      { w:"萌芽", zy:"ㄇㄥˊ ㄧㄚˊ", type:"動詞", meaning:"種子開始發出嫩芽，也比喻事物剛開始出現", example:"春天到來，樹枝上開始萌芽。" }
+    ],
+    quiz: [
+      { q:"老師說種子要怎樣才能發芽？", opts:["每天說話給它聽","放在黑暗的地方","每天澆水、給適當陽光","加很多肥料，不需要水"], ans:2, exp:"老師說「每天澆水、給予適當陽光，種子就會慢慢發芽生長」。" },
+      { q:"幾週後，種子發芽了？", opts:["一週","兩週","三週","四週"], ans:2, exp:"「三週後，小綠芽真的冒出來了」。" },
+      { q:"「親眼目睹」的意思是？", opts:["聽別人說起這件事","用相機拍下來","自己的眼睛親自看到","閉上眼睛想像"], ans:2, exp:"親眼目睹是「用自己的眼睛親自看到」，不是聽說的。" }
+    ]
+  },
+  {
+    id: 16, title: "作文課",
+    body: `<ruby>作<rt>ㄗㄨㄛˋ</rt></ruby><ruby>文<rt>ㄨㄣˊ</rt></ruby><ruby>課<rt>ㄎㄜˋ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>題<rt>ㄊㄧˊ</rt></ruby><ruby>目<rt>ㄇㄨˋ</rt></ruby><ruby>是<rt>ㄕˋ</rt></ruby>「<ruby>我<rt>ㄨㄛˇ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>夢<rt>ㄇㄥˋ</rt></ruby><ruby>想<rt>ㄒㄧㄤˇ</rt></ruby>」。<ruby>小<rt>ㄒㄧㄠˇ</rt></ruby><ruby>婷<rt>ㄊㄧㄥˊ</rt></ruby><ruby>拿<rt>ㄋㄚˊ</rt></ruby><ruby>起<rt>ㄑㄧˇ</rt></ruby><ruby>筆<rt>ㄅㄧˇ</rt></ruby>，<ruby>毫<rt>ㄏㄠˊ</rt></ruby><ruby>不<rt>ㄅㄨˋ</rt></ruby><ruby>猶<rt>ㄧㄡˊ</rt></ruby><ruby>豫<rt>ㄩˋ</rt></ruby><ruby>地<rt>ㄉㄧˋ</rt></ruby><ruby>寫<rt>ㄒㄧㄝˇ</rt></ruby><ruby>下<rt>ㄒㄧㄚˋ</rt></ruby>：「<ruby>我<rt>ㄨㄛˇ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>夢<rt>ㄇㄥˋ</rt></ruby><ruby>想<rt>ㄒㄧㄤˇ</rt></ruby><ruby>是<rt>ㄕˋ</rt></ruby><ruby>成<rt>ㄔㄥˊ</rt></ruby><ruby>為<rt>ㄨㄟˊ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>位<rt>ㄨㄟˋ</rt></ruby><ruby>醫<rt>ㄧ</rt></ruby><ruby>生<rt>ㄕㄥ</rt></ruby>，<ruby>幫<rt>ㄅㄤ</rt></ruby><ruby>助<rt>ㄓㄨˋ</rt></ruby><ruby>每<rt>ㄇㄟˇ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>個<rt>ㄍㄜˋ</rt></ruby><ruby>需<rt>ㄒㄩ</rt></ruby><ruby>要<rt>ㄧㄠˋ</rt></ruby><ruby>幫<rt>ㄅㄤ</rt></ruby><ruby>助<rt>ㄓㄨˋ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>人<rt>ㄖㄣˊ</rt></ruby>。」<ruby>她<rt>ㄊㄚ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>文<rt>ㄨㄣˊ</rt></ruby><ruby>章<rt>ㄓㄤ</rt></ruby><ruby>不<rt>ㄅㄨˋ</rt></ruby><ruby>僅<rt>ㄐㄧㄣˇ</rt></ruby><ruby>文<rt>ㄨㄣˊ</rt></ruby><ruby>筆<rt>ㄅㄧˇ</rt></ruby><ruby>流<rt>ㄌㄧㄡˊ</rt></ruby><ruby>暢<rt>ㄔㄤˋ</rt></ruby>，<ruby>更<rt>ㄍㄥˋ</rt></ruby><ruby>充<rt>ㄔㄨㄥ</rt></ruby><ruby>滿<rt>ㄇㄢˇ</rt></ruby><ruby>了<rt>ㄌㄜ</rt></ruby><ruby>真<rt>ㄓㄣ</rt></ruby><ruby>摯<rt>ㄓˋ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>情<rt>ㄑㄧㄥˊ</rt></ruby><ruby>感<rt>ㄍㄢˇ</rt></ruby>。<ruby>老<rt>ㄌㄠˇ</rt></ruby><ruby>師<rt>ㄕ</rt></ruby><ruby>在<rt>ㄗㄞˋ</rt></ruby><ruby>作<rt>ㄗㄨㄛˋ</rt></ruby><ruby>文<rt>ㄨㄣˊ</rt></ruby><ruby>上<rt>ㄕㄤˋ</rt></ruby><ruby>圈<rt>ㄑㄩㄢ</rt></ruby><ruby>了<rt>ㄌㄜ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>個<rt>ㄍㄜˋ</rt></ruby><ruby>大<rt>ㄉㄚˋ</rt></ruby><ruby>大<rt>ㄉㄚˋ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>優<rt>ㄧㄡ</rt></ruby>，<ruby>批<rt>ㄆㄧ</rt></ruby><ruby>語<rt>ㄩˇ</rt></ruby><ruby>寫<rt>ㄒㄧㄝˇ</rt></ruby><ruby>著<rt>ㄓㄜ</rt></ruby>：「<ruby>情<rt>ㄑㄧㄥˊ</rt></ruby><ruby>感<rt>ㄍㄢˇ</rt></ruby><ruby>真<rt>ㄓㄣ</rt></ruby><ruby>實<rt>ㄕˊ</rt></ruby>，<ruby>文<rt>ㄨㄣˊ</rt></ruby><ruby>字<rt>ㄗˋ</rt></ruby><ruby>有<rt>ㄧㄡˇ</rt></ruby><ruby>力<rt>ㄌㄧˋ</rt></ruby>。」`,
+    vocab: [
+      { w:"文筆", zy:"ㄨㄣˊ ㄅㄧˇ", type:"名詞", meaning:"寫文章的能力與風格", example:"她的文筆優美，每篇文章都讓人讀得津津有味。" },
+      { w:"流暢", zy:"ㄌㄧㄡˊ ㄔㄤˋ", type:"形容詞", meaning:"順暢自然，沒有停頓或阻礙", example:"他說話非常流暢，一點都不緊張。" },
+      { w:"真摯", zy:"ㄓㄣ ㄓˋ", type:"形容詞", meaning:"真誠懇切，發自內心，沒有虛假", example:"他真摯的道歉讓對方原諒了他。" }
+    ],
+    quiz: [
+      { q:"作文課的題目是什麼？", opts:["我的家人","我的夢想","我最喜歡的動物","難忘的一天"], ans:1, exp:"題目是「我的夢想」。" },
+      { q:"小婷的夢想是什麼？", opts:["成為老師","成為運動員","成為醫生，幫助需要幫助的人","成為畫家"], ans:2, exp:"小婷寫「我的夢想是成為一位醫生，幫助每一個需要幫助的人」。" },
+      { q:"老師對小婷的評語是什麼？", opts:["字太多，要精簡","情感真實，文字有力","文筆需要加強","要多寫一些例子"], ans:1, exp:"老師批語「情感真實，文字有力」。" }
+    ]
+  },
+  {
+    id: 17, title: "早自習",
+    body: `<ruby>每<rt>ㄇㄟˇ</rt></ruby><ruby>天<rt>ㄊㄧㄢ</rt></ruby><ruby>早<rt>ㄗㄠˇ</rt></ruby><ruby>上<rt>ㄕㄤˋ</rt></ruby><ruby>第<rt>ㄉㄧˋ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>節<rt>ㄐㄧㄝˊ</rt></ruby><ruby>課<rt>ㄎㄜˋ</rt></ruby><ruby>之<rt>ㄓ</rt></ruby><ruby>前<rt>ㄑㄧㄢˊ</rt></ruby>，<ruby>是<rt>ㄕˋ</rt></ruby><ruby>早<rt>ㄗㄠˇ</rt></ruby><ruby>自<rt>ㄗˋ</rt></ruby><ruby>習<rt>ㄒㄧˊ</rt></ruby><ruby>時<rt>ㄕˊ</rt></ruby><ruby>間<rt>ㄐㄧㄢ</rt></ruby>。<ruby>同<rt>ㄊㄨㄥˊ</rt></ruby><ruby>學<rt>ㄒㄩㄝˊ</rt></ruby><ruby>們<rt>ㄇㄣ</rt></ruby><ruby>安<rt>ㄢ</rt></ruby><ruby>靜<rt>ㄐㄧㄥˋ</rt></ruby><ruby>地<rt>ㄉㄧˋ</rt></ruby><ruby>坐<rt>ㄗㄨㄛˋ</rt></ruby><ruby>在<rt>ㄗㄞˋ</rt></ruby><ruby>位<rt>ㄨㄟˋ</rt></ruby><ruby>子<rt>ㄗ</rt></ruby><ruby>上<rt>ㄕㄤˋ</rt></ruby>，<ruby>有<rt>ㄧㄡˇ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>寫<rt>ㄒㄧㄝˇ</rt></ruby><ruby>作<rt>ㄗㄨㄛˋ</rt></ruby><ruby>業<rt>ㄧㄝˋ</rt></ruby>，<ruby>有<rt>ㄧㄡˇ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>複<rt>ㄈㄨˋ</rt></ruby><ruby>習<rt>ㄒㄧˊ</rt></ruby><ruby>功<rt>ㄍㄨㄥ</rt></ruby><ruby>課<rt>ㄎㄜˋ</rt></ruby>，<ruby>有<rt>ㄧㄡˇ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>靜<rt>ㄐㄧㄥˋ</rt></ruby><ruby>靜<rt>ㄐㄧㄥˋ</rt></ruby><ruby>地<rt>ㄉㄧˋ</rt></ruby><ruby>閱<rt>ㄩㄝˋ</rt></ruby><ruby>讀<rt>ㄉㄨˊ</rt></ruby>。<ruby>阿<rt>ㄚ</rt></ruby><ruby>翔<rt>ㄒㄧㄤˊ</rt></ruby><ruby>利<rt>ㄌㄧˋ</rt></ruby><ruby>用<rt>ㄩㄥˋ</rt></ruby><ruby>這<rt>ㄓㄜˋ</rt></ruby><ruby>段<rt>ㄉㄨㄢˋ</rt></ruby><ruby>時<rt>ㄕˊ</rt></ruby><ruby>間<rt>ㄐㄧㄢ</rt></ruby><ruby>背<rt>ㄅㄟˋ</rt></ruby><ruby>誦<rt>ㄙㄨㄥˋ</rt></ruby><ruby>昨<rt>ㄗㄨㄛˊ</rt></ruby><ruby>天<rt>ㄊㄧㄢ</rt></ruby><ruby>老<rt>ㄌㄠˇ</rt></ruby><ruby>師<rt>ㄕ</rt></ruby><ruby>教<rt>ㄐㄧㄠ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>課<rt>ㄎㄜˋ</rt></ruby><ruby>文<rt>ㄨㄣˊ</rt></ruby>，<ruby>他<rt>ㄊㄚ</rt></ruby><ruby>深<rt>ㄕㄣ</rt></ruby><ruby>信<rt>ㄒㄧㄣˋ</rt></ruby><ruby>唯<rt>ㄨㄟˊ</rt></ruby><ruby>有<rt>ㄧㄡˇ</rt></ruby><ruby>反<rt>ㄈㄢˇ</rt></ruby><ruby>覆<rt>ㄈㄨˋ</rt></ruby><ruby>練<rt>ㄌㄧㄢˋ</rt></ruby><ruby>習<rt>ㄒㄧˊ</rt></ruby>，<ruby>才<rt>ㄘㄞˊ</rt></ruby><ruby>能<rt>ㄋㄥˊ</rt></ruby><ruby>讓<rt>ㄖㄤˋ</rt></ruby><ruby>知<rt>ㄓ</rt></ruby><ruby>識<rt>ㄕˋ</rt></ruby><ruby>深<rt>ㄕㄣ</rt></ruby><ruby>深<rt>ㄕㄣ</rt></ruby><ruby>烙<rt>ㄌㄠˋ</rt></ruby><ruby>印<rt>ㄧㄣˋ</rt></ruby><ruby>在<rt>ㄗㄞˋ</rt></ruby><ruby>腦<rt>ㄋㄠˇ</rt></ruby><ruby>海<rt>ㄏㄞˇ</rt></ruby><ruby>中<rt>ㄓㄨㄥ</rt></ruby>。`,
+    vocab: [
+      { w:"複習", zy:"ㄈㄨˋ ㄒㄧˊ", type:"動詞", meaning:"把學過的東西再看一遍，加深記憶", example:"考試前多複習，成績會更好。" },
+      { w:"反覆", zy:"ㄈㄢˇ ㄈㄨˋ", type:"副詞", meaning:"一次又一次，重複地做同一件事", example:"她反覆練習那個困難的動作，終於做到了。" },
+      { w:"烙印", zy:"ㄌㄠˋ ㄧㄣˋ", type:"動詞/名詞", meaning:"深深印在心裡或腦海中，難以忘記", example:"那場比賽的勝利，永遠烙印在他的記憶中。" }
+    ],
+    quiz: [
+      { q:"早自習時，下列哪種行為不是文章提到的？", opts:["寫作業","複習功課","靜靜地閱讀","和同學聊天"], ans:3, exp:"文章提到寫作業、複習功課、靜靜閱讀，沒有提到聊天。" },
+      { q:"阿翔在早自習做什麼？", opts:["看課外書","和朋友討論功課","背誦昨天的課文","寫美術作業"], ans:2, exp:"阿翔「背誦昨天老師教的課文」。" },
+      { q:"阿翔相信什麼才能讓知識記得更牢？", opts:["只要聽老師說一次就夠","靠天分，不需要練習","反覆練習，讓知識烙印在腦海中","每天睡前想一次"], ans:2, exp:"阿翔「深信唯有反覆練習，才能讓知識深深烙印在腦海中」。" }
+    ]
+  },
+  {
+    id: 18, title: "午休時間",
+    body: `<ruby>午<rt>ㄨˇ</rt></ruby><ruby>飯<rt>ㄈㄢˋ</rt></ruby><ruby>後<rt>ㄏㄡˋ</rt></ruby><ruby>是<rt>ㄕˋ</rt></ruby><ruby>午<rt>ㄨˇ</rt></ruby><ruby>休<rt>ㄒㄧㄡ</rt></ruby><ruby>時<rt>ㄕˊ</rt></ruby><ruby>間<rt>ㄐㄧㄢ</rt></ruby>，<ruby>教<rt>ㄐㄧㄠˋ</rt></ruby><ruby>室<rt>ㄕˋ</rt></ruby><ruby>裡<rt>ㄌㄧˇ</rt></ruby><ruby>漸<rt>ㄐㄧㄢˋ</rt></ruby><ruby>漸<rt>ㄐㄧㄢˋ</rt></ruby><ruby>安<rt>ㄢ</rt></ruby><ruby>靜<rt>ㄐㄧㄥˋ</rt></ruby><ruby>下<rt>ㄒㄧㄚˋ</rt></ruby><ruby>來<rt>ㄌㄞˊ</rt></ruby>。<ruby>大<rt>ㄉㄚˋ</rt></ruby><ruby>部<rt>ㄅㄨˋ</rt></ruby><ruby>分<rt>ㄈㄣ</rt></ruby><ruby>同<rt>ㄊㄨㄥˊ</rt></ruby><ruby>學<rt>ㄒㄩㄝˊ</rt></ruby><ruby>把<rt>ㄅㄚˇ</rt></ruby><ruby>頭<rt>ㄊㄡˊ</rt></ruby><ruby>埋<rt>ㄇㄞˊ</rt></ruby><ruby>進<rt>ㄐㄧㄣˋ</rt></ruby><ruby>臂<rt>ㄅㄧˋ</rt></ruby><ruby>彎<rt>ㄨㄢ</rt></ruby><ruby>裡<rt>ㄌㄧˇ</rt></ruby><ruby>小<rt>ㄒㄧㄠˇ</rt></ruby><ruby>睡<rt>ㄕㄨㄟˋ</rt></ruby>。<ruby>小<rt>ㄒㄧㄠˇ</rt></ruby><ruby>翔<rt>ㄒㄧㄤˊ</rt></ruby><ruby>卻<rt>ㄑㄩㄝˋ</rt></ruby><ruby>睡<rt>ㄕㄨㄟˋ</rt></ruby><ruby>不<rt>ㄅㄨˋ</rt></ruby><ruby>著<rt>ㄓㄠˊ</rt></ruby>，<ruby>他<rt>ㄊㄚ</rt></ruby><ruby>輕<rt>ㄑㄧㄥ</rt></ruby><ruby>輕<rt>ㄑㄧㄥ</rt></ruby><ruby>地<rt>ㄉㄧˋ</rt></ruby><ruby>翻<rt>ㄈㄢ</rt></ruby><ruby>開<rt>ㄎㄞ</rt></ruby><ruby>一<rt>ㄧ</rt></ruby><ruby>本<rt>ㄅㄣˇ</rt></ruby><ruby>課<rt>ㄎㄜˋ</rt></ruby><ruby>外<rt>ㄨㄞˋ</rt></ruby><ruby>書<rt>ㄕㄨ</rt></ruby>，<ruby>沉<rt>ㄔㄣˊ</rt></ruby><ruby>浸<rt>ㄐㄧㄣˋ</rt></ruby><ruby>在<rt>ㄗㄞˋ</rt></ruby><ruby>故<rt>ㄍㄨˋ</rt></ruby><ruby>事<rt>ㄕˋ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>世<rt>ㄕˋ</rt></ruby><ruby>界<rt>ㄐㄧㄝˋ</rt></ruby><ruby>裡<rt>ㄌㄧˇ</rt></ruby>。<ruby>鈴<rt>ㄌㄧㄥˊ</rt></ruby><ruby>聲<rt>ㄕㄥ</rt></ruby><ruby>響<rt>ㄒㄧㄤˇ</rt></ruby><ruby>起<rt>ㄑㄧˇ</rt></ruby><ruby>時<rt>ㄕˊ</rt></ruby>，<ruby>他<rt>ㄊㄚ</rt></ruby><ruby>依<rt>ㄧ</rt></ruby><ruby>依<rt>ㄧ</rt></ruby><ruby>不<rt>ㄅㄨˋ</rt></ruby><ruby>捨<rt>ㄕㄜˇ</rt></ruby><ruby>地<rt>ㄉㄧˋ</rt></ruby><ruby>把<rt>ㄅㄚˇ</rt></ruby><ruby>書<rt>ㄕㄨ</rt></ruby><ruby>夾<rt>ㄐㄧㄚ</rt></ruby><ruby>進<rt>ㄐㄧㄣˋ</rt></ruby><ruby>書<rt>ㄕㄨ</rt></ruby><ruby>包<rt>ㄅㄠ</rt></ruby>，<ruby>心<rt>ㄒㄧㄣ</rt></ruby><ruby>裡<rt>ㄌㄧˇ</rt></ruby><ruby>已<rt>ㄧˇ</rt></ruby><ruby>計<rt>ㄐㄧˋ</rt></ruby><ruby>劃<rt>ㄏㄨㄚˋ</rt></ruby><ruby>好<rt>ㄏㄠˇ</rt></ruby><ruby>下<rt>ㄒㄧㄚˋ</rt></ruby><ruby>課<rt>ㄎㄜˋ</rt></ruby><ruby>後<rt>ㄏㄡˋ</rt></ruby><ruby>要<rt>ㄧㄠˋ</rt></ruby><ruby>繼<rt>ㄐㄧˋ</rt></ruby><ruby>續<rt>ㄒㄩˋ</rt></ruby><ruby>讀<rt>ㄉㄨˊ</rt></ruby><ruby>下<rt>ㄒㄧㄚˋ</rt></ruby><ruby>去<rt>ㄑㄩˋ</rt></ruby>。`,
+    vocab: [
+      { w:"沉浸", zy:"ㄔㄣˊ ㄐㄧㄣˋ", type:"動詞", meaning:"完全投入，深深陷入某種狀態或情境中", example:"她沉浸在音樂中，忘記了時間。" },
+      { w:"依依不捨", zy:"ㄧ ㄧ ㄅㄨˋ ㄕㄜˇ", type:"成語", meaning:"非常留戀，捨不得離開或放下", example:"暑假結束，孩子們依依不捨地離開了遊樂園。" },
+      { w:"計劃", zy:"ㄐㄧˋ ㄏㄨㄚˋ", type:"動詞/名詞", meaning:"事先想好並安排要做的事情", example:"她計劃週末去拜訪老朋友。" }
+    ],
+    quiz: [
+      { q:"午休時間，大部分同學在做什麼？", opts:["玩遊戲","看課外書","埋頭小睡","討論作業"], ans:2, exp:"「大部分同學把頭埋進臂彎裡小睡」。" },
+      { q:"小翔在午休做什麼？", opts:["睡著了","悄悄出去玩","翻開課外書，沉浸在故事世界裡","和同學說話"], ans:2, exp:"小翔「翻開一本課外書，沉浸在故事的世界裡」。" },
+      { q:"「依依不捨」最適合用來形容哪種情況？", opts:["很快樂地跑出教室","非常討厭某件事情","很捨不得放下正在讀的書","對任何事都不在乎"], ans:2, exp:"依依不捨是非常留戀、捨不得放下或離開的意思。" }
+    ]
+  },
+  {
+    id: 19, title: "同學生病了",
+    body: `<ruby>阿<rt>ㄚ</rt></ruby><ruby>偉<rt>ㄨㄟˋ</rt></ruby><ruby>因<rt>ㄧㄣ</rt></ruby><ruby>為<rt>ㄨㄟˋ</rt></ruby><ruby>發<rt>ㄈㄚ</rt></ruby><ruby>燒<rt>ㄕㄠ</rt></ruby><ruby>請<rt>ㄑㄧㄥˇ</rt></ruby><ruby>了<rt>ㄌㄜ</rt></ruby><ruby>三<rt>ㄙㄢ</rt></ruby><ruby>天<rt>ㄊㄧㄢ</rt></ruby><ruby>假<rt>ㄐㄧㄚˋ</rt></ruby>。<ruby>同<rt>ㄊㄨㄥˊ</rt></ruby><ruby>學<rt>ㄒㄩㄝˊ</rt></ruby><ruby>們<rt>ㄇㄣ</rt></ruby><ruby>決<rt>ㄐㄩㄝˊ</rt></ruby><ruby>定<rt>ㄉㄧㄥˋ</rt></ruby><ruby>輪<rt>ㄌㄨㄣˊ</rt></ruby><ruby>流<rt>ㄌㄧㄡˊ</rt></ruby><ruby>幫<rt>ㄅㄤ</rt></ruby><ruby>他<rt>ㄊㄚ</rt></ruby><ruby>抄<rt>ㄔㄠ</rt></ruby><ruby>寫<rt>ㄒㄧㄝˇ</rt></ruby><ruby>筆<rt>ㄅㄧˇ</rt></ruby><ruby>記<rt>ㄐㄧˋ</rt></ruby>，<ruby>班<rt>ㄅㄢ</rt></ruby><ruby>長<rt>ㄓㄤˇ</rt></ruby><ruby>每<rt>ㄇㄟˇ</rt></ruby><ruby>天<rt>ㄊㄧㄢ</rt></ruby><ruby>放<rt>ㄈㄤˋ</rt></ruby><ruby>學<rt>ㄒㄩㄝˊ</rt></ruby><ruby>後<rt>ㄏㄡˋ</rt></ruby><ruby>把<rt>ㄅㄚˇ</rt></ruby><ruby>筆<rt>ㄅㄧˇ</rt></ruby><ruby>記<rt>ㄐㄧˋ</rt></ruby><ruby>送<rt>ㄙㄨㄥˋ</rt></ruby><ruby>到<rt>ㄉㄠˋ</rt></ruby><ruby>他<rt>ㄊㄚ</rt></ruby><ruby>家<rt>ㄐㄧㄚ</rt></ruby>。<ruby>老<rt>ㄌㄠˇ</rt></ruby><ruby>師<rt>ㄕ</rt></ruby><ruby>也<rt>ㄧㄝˇ</rt></ruby><ruby>親<rt>ㄑㄧㄣ</rt></ruby><ruby>自<rt>ㄗˋ</rt></ruby><ruby>打<rt>ㄉㄚˇ</rt></ruby><ruby>電<rt>ㄉㄧㄢˋ</rt></ruby><ruby>話<rt>ㄏㄨㄚˋ</rt></ruby><ruby>關<rt>ㄍㄨㄢ</rt></ruby><ruby>心<rt>ㄒㄧㄣ</rt></ruby><ruby>他<rt>ㄊㄚ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>身<rt>ㄕㄣ</rt></ruby><ruby>體<rt>ㄊㄧˇ</rt></ruby><ruby>狀<rt>ㄓㄨㄤˋ</rt></ruby><ruby>況<rt>ㄎㄨㄤˋ</rt></ruby>。<ruby>阿<rt>ㄚ</rt></ruby><ruby>偉<rt>ㄨㄟˋ</rt></ruby><ruby>康<rt>ㄎㄤ</rt></ruby><ruby>復<rt>ㄈㄨˋ</rt></ruby><ruby>回<rt>ㄏㄨㄟˊ</rt></ruby><ruby>到<rt>ㄉㄠˋ</rt></ruby><ruby>學<rt>ㄒㄩㄝˊ</rt></ruby><ruby>校<rt>ㄒㄧㄠˋ</rt></ruby><ruby>後<rt>ㄏㄡˋ</rt></ruby>，<ruby>感<rt>ㄍㄢˇ</rt></ruby><ruby>動<rt>ㄉㄨㄥˋ</rt></ruby><ruby>地<rt>ㄉㄧˋ</rt></ruby><ruby>說<rt>ㄕㄨㄛ</rt></ruby>：「<ruby>有<rt>ㄧㄡˇ</rt></ruby><ruby>你<rt>ㄋㄧˇ</rt></ruby><ruby>們<rt>ㄇㄣ</rt></ruby><ruby>這<rt>ㄓㄜˋ</rt></ruby><ruby>群<rt>ㄑㄩㄣˊ</rt></ruby><ruby>朋<rt>ㄆㄥˊ</rt></ruby><ruby>友<rt>ㄧㄡˇ</rt></ruby>，<ruby>真<rt>ㄓㄣ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>很<rt>ㄏㄣˇ</rt></ruby><ruby>幸<rt>ㄒㄧㄥˋ</rt></ruby><ruby>運<rt>ㄩㄣˋ</rt></ruby>。」`,
+    vocab: [
+      { w:"康復", zy:"ㄎㄤ ㄈㄨˋ", type:"動詞", meaning:"病好了，恢復健康", example:"她生病後休息了一週，終於康復了。" },
+      { w:"狀況", zy:"ㄓㄨㄤˋ ㄎㄨㄤˋ", type:"名詞", meaning:"事情目前的情形或狀態", example:"老師詢問他身體的狀況是否好轉。" },
+      { w:"幸運", zy:"ㄒㄧㄥˋ ㄩㄣˋ", type:"形容詞", meaning:"遇到好事，運氣很好", example:"他覺得自己很幸運，有這麼好的家人陪伴。" }
+    ],
+    quiz: [
+      { q:"阿偉請假的原因是什麼？", opts:["去旅行","受傷了","發燒生病","家裡有事"], ans:2, exp:"阿偉「因為發燒請了三天假」。" },
+      { q:"同學們如何幫助阿偉？", opts:["幫他寫作業","去他家陪他玩","輪流幫他抄筆記，並送到他家","告訴他考試的題目"], ans:2, exp:"同學輪流抄筆記，班長每天送到阿偉家。" },
+      { q:"阿偉回到學校後說什麼？", opts:["我要請更長的假","謝謝你們的筆記","有你們這群朋友，真的很幸運","我以後也要幫你們"], ans:2, exp:"阿偉說「有你們這群朋友，真的很幸運」。" }
+    ]
+  },
+  {
+    id: 20, title: "畢業前夕",
+    body: `<ruby>再<rt>ㄗㄞˋ</rt></ruby><ruby>過<rt>ㄍㄨㄛˋ</rt></ruby><ruby>幾<rt>ㄐㄧˇ</rt></ruby><ruby>天<rt>ㄊㄧㄢ</rt></ruby>，<ruby>大<rt>ㄉㄚˋ</rt></ruby><ruby>家<rt>ㄐㄧㄚ</rt></ruby><ruby>就<rt>ㄐㄧㄡˋ</rt></ruby><ruby>要<rt>ㄧㄠˋ</rt></ruby><ruby>從<rt>ㄘㄨㄥˊ</rt></ruby><ruby>這<rt>ㄓㄜˋ</rt></ruby><ruby>所<rt>ㄙㄨㄛˇ</rt></ruby><ruby>學<rt>ㄒㄩㄝˊ</rt></ruby><ruby>校<rt>ㄒㄧㄠˋ</rt></ruby><ruby>畢<rt>ㄅㄧˋ</rt></ruby><ruby>業<rt>ㄧㄝˋ</rt></ruby><ruby>了<rt>ㄌㄜ</rt></ruby>。<ruby>同<rt>ㄊㄨㄥˊ</rt></ruby><ruby>學<rt>ㄒㄩㄝˊ</rt></ruby><ruby>們<rt>ㄇㄣ</rt></ruby><ruby>在<rt>ㄗㄞˋ</rt></ruby><ruby>互<rt>ㄏㄨˋ</rt></ruby><ruby>相<rt>ㄒㄧㄤ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>畢<rt>ㄅㄧˋ</rt></ruby><ruby>業<rt>ㄧㄝˋ</rt></ruby><ruby>紀<rt>ㄐㄧˋ</rt></ruby><ruby>念<rt>ㄋㄧㄢˋ</rt></ruby><ruby>冊<rt>ㄘㄜˋ</rt></ruby><ruby>上<rt>ㄕㄤˋ</rt></ruby><ruby>留<rt>ㄌㄧㄡˊ</rt></ruby><ruby>下<rt>ㄒㄧㄚˋ</rt></ruby><ruby>祝<rt>ㄓㄨˋ</rt></ruby><ruby>福<rt>ㄈㄨˊ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>話<rt>ㄏㄨㄚˋ</rt></ruby>。<ruby>小<rt>ㄒㄧㄠˇ</rt></ruby><ruby>勇<rt>ㄩㄥˇ</rt></ruby><ruby>在<rt>ㄗㄞˋ</rt></ruby><ruby>每<rt>ㄇㄟˇ</rt></ruby><ruby>本<rt>ㄅㄣˇ</rt></ruby><ruby>紀<rt>ㄐㄧˋ</rt></ruby><ruby>念<rt>ㄋㄧㄢˋ</rt></ruby><ruby>冊<rt>ㄘㄜˋ</rt></ruby><ruby>上<rt>ㄕㄤˋ</rt></ruby><ruby>認<rt>ㄖㄣˋ</rt></ruby><ruby>真<rt>ㄓㄣ</rt></ruby><ruby>地<rt>ㄉㄧˋ</rt></ruby><ruby>寫<rt>ㄒㄧㄝˇ</rt></ruby><ruby>下<rt>ㄒㄧㄚˋ</rt></ruby><ruby>對<rt>ㄉㄨㄟˋ</rt></ruby><ruby>每<rt>ㄇㄟˇ</rt></ruby><ruby>個<rt>ㄍㄜˋ</rt></ruby><ruby>人<rt>ㄖㄣˊ</rt></ruby><ruby>最<rt>ㄗㄨㄟˋ</rt></ruby><ruby>深<rt>ㄕㄣ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>印<rt>ㄧㄣˋ</rt></ruby><ruby>象<rt>ㄒㄧㄤˋ</rt></ruby>。<ruby>大<rt>ㄉㄚˋ</rt></ruby><ruby>家<rt>ㄐㄧㄚ</rt></ruby><ruby>笑<rt>ㄒㄧㄠˋ</rt></ruby><ruby>著<rt>ㄓㄜ</rt></ruby><ruby>哭<rt>ㄎㄨ</rt></ruby>、<ruby>哭<rt>ㄎㄨ</rt></ruby><ruby>著<rt>ㄓㄜ</rt></ruby><ruby>笑<rt>ㄒㄧㄠˋ</rt></ruby>，<ruby>知<rt>ㄓ</rt></ruby><ruby>道<rt>ㄉㄠˋ</rt></ruby><ruby>不<rt>ㄅㄨˋ</rt></ruby><ruby>管<rt>ㄍㄨㄢˇ</rt></ruby><ruby>將<rt>ㄐㄧㄤ</rt></ruby><ruby>來<rt>ㄌㄞˊ</rt></ruby><ruby>走<rt>ㄗㄡˇ</rt></ruby><ruby>向<rt>ㄒㄧㄤˋ</rt></ruby><ruby>哪<rt>ㄋㄚˇ</rt></ruby><ruby>裡<rt>ㄌㄧˇ</rt></ruby>，<ruby>這<rt>ㄓㄜˋ</rt></ruby><ruby>段<rt>ㄉㄨㄢˋ</rt></ruby><ruby>共<rt>ㄍㄨㄥˋ</rt></ruby><ruby>同<rt>ㄊㄨㄥˊ</rt></ruby><ruby>走<rt>ㄗㄡˇ</rt></ruby><ruby>過<rt>ㄍㄨㄛˋ</rt></ruby><ruby>的<rt>ㄉㄜ</rt></ruby><ruby>歲<rt>ㄙㄨㄟˋ</rt></ruby><ruby>月<rt>ㄩㄝˋ</rt></ruby>，<ruby>將<rt>ㄐㄧㄤ</rt></ruby><ruby>永<rt>ㄩㄥˇ</rt></ruby><ruby>遠<rt>ㄩㄢˇ</rt></ruby><ruby>留<rt>ㄌㄧㄡˊ</rt></ruby><ruby>存<rt>ㄘㄨㄣˊ</rt></ruby><ruby>在<rt>ㄗㄞˋ</rt></ruby><ruby>每<rt>ㄇㄟˇ</rt></ruby><ruby>個<rt>ㄍㄜˋ</rt></ruby><ruby>人<rt>ㄖㄣˊ</rt></ruby><ruby>心<rt>ㄒㄧㄣ</rt></ruby><ruby>裡<rt>ㄌㄧˇ</rt></ruby>。`,
+    vocab: [
+      { w:"紀念冊", zy:"ㄐㄧˋ ㄋㄧㄢˋ ㄘㄜˋ", type:"名詞", meaning:"用來留下回憶和祝福的紀念本子", example:"畢業那天，大家都在紀念冊上互相簽名留念。" },
+      { w:"印象", zy:"ㄧㄣˋ ㄒㄧㄤˋ", type:"名詞", meaning:"看到或接觸某人某事後，留在心裡的感覺和記憶", example:"老師對她的第一印象非常好。" },
+      { w:"留存", zy:"ㄌㄧㄡˊ ㄘㄨㄣˊ", type:"動詞", meaning:"保留並存在，不消失", example:"那段美好的記憶將永遠留存在她心中。" }
+    ],
+    quiz: [
+      { q:"同學們在紀念冊上留下什麼？", opts:["彼此的照片","祝福的話","自己的成績單","老師教過的詩"], ans:1, exp:"同學們「在紀念冊上留下祝福的話」。" },
+      { q:"小勇在紀念冊上寫了什麼內容？", opts:["自己的夢想","每個人的聯絡方式","對每個人最深的印象","一首詩"], ans:2, exp:"小勇「認真地寫下對每個人最深的印象」。" },
+      { q:"文章最後說，這段共同走過的歲月將如何？", opts:["隨著時間慢慢消失","只留在紀念冊裡","永遠留存在每個人心裡","被大家慢慢遺忘"], ans:2, exp:"文章說「這段共同走過的歲月，將永遠留存在每個人心裡」。" }
+    ]
+  }
+];
+
+// State
+let doneSets = {};
+let quizAnswered = {};
+
+function loadProgress() {
+  ARTICLES.forEach(a => {
+    const key = 'uNdone_u7_' + a.id;
+    const val = localStorage.getItem(key);
+    doneSets[a.id] = (val === 'done');
+  });
+}
+
+function saveProgress(id) {
+  localStorage.setItem('uNdone_u7_' + id, 'done');
+  doneSets[id] = true;
+}
+
+function updateProgress() {
+  const done = Object.values(doneSets).filter(Boolean).length;
+  document.getElementById('doneCount').textContent = done;
+  document.getElementById('progressFill').style.width = (done / 20 * 100) + '%';
+}
+
+function renderList() {
+  const grid = document.getElementById('articleGrid');
+  grid.innerHTML = '';
+  ARTICLES.forEach(a => {
+    const isDone = doneSets[a.id];
+    const card = document.createElement('div');
+    card.className = 'listCard ' + (isDone ? 'done' : 'undone');
+    card.innerHTML = `
+      <div class="num">第 ${a.id} 篇</div>
+      <div class="title">${a.title}</div>
+      <span class="badge">${isDone ? '✓ 完成' : '待讀'}</span>
+    `;
+    card.onclick = () => showArticle(a.id);
+    grid.appendChild(card);
+  });
+}
+
+function showList() {
+  document.getElementById('listView').style.display = 'block';
+  document.getElementById('readerView').style.display = 'none';
+  renderList();
+  updateProgress();
+}
+
+function showArticle(id) {
+  quizAnswered = {};
+  const a = ARTICLES.find(x => x.id === id);
+  document.getElementById('listView').style.display = 'none';
+  document.getElementById('readerView').style.display = 'block';
+
+  let html = `
+    <div class="readerCard">
+      <div class="articleTitle">📖 ${a.title}</div>
+      <div class="articleBody">${a.body}</div>
+      <div class="vocabSection">
+        <div class="vocabTitle">📝 詞語學習</div>
+        ${a.vocab.map(v => `
+          <div class="vocabCard">
+            <div><span class="vocabWord">${v.w}</span><span class="vocabType">${v.type}</span></div>
+            <div class="vocabZy">${v.zy}</div>
+            <div class="vocabMeaning">${v.meaning}</div>
+            <div class="vocabExample">例：${v.example}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    <div class="readerCard quizSection">
+      <div class="quizTitle">🧠 閱讀測驗</div>
+      ${a.quiz.map((q, qi) => `
+        <div class="quizCard" id="qcard_${id}_${qi}">
+          <div class="quizQ">${qi + 1}. ${q.q}</div>
+          <div class="quizOpts">
+            ${q.opts.map((opt, oi) => `
+              <button class="optBtn" onclick="answerQ(${id}, ${qi}, ${oi})" id="opt_${id}_${qi}_${oi}">
+                ${'ABCD'[oi]}. ${opt}
+              </button>
+            `).join('')}
+          </div>
+          <div class="explanation" id="exp_${id}_${qi}">💡 ${q.exp}</div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="completionBanner" id="banner_${id}">
+      <span class="big">🎉</span>
+      恭喜旻翰完成第 ${id} 篇！<br>繼續加油！
+    </div>
+  `;
+  document.getElementById('articleContent').innerHTML = html;
+  window.scrollTo(0, 0);
+}
+
+function answerQ(artId, qi, oi) {
+  if (quizAnswered[qi]) return;
+  quizAnswered[qi] = true;
+
+  const a = ARTICLES.find(x => x.id === artId);
+  const correct = a.quiz[qi].ans;
+  const opts = document.querySelectorAll(`#qcard_${artId}_${qi} .optBtn`);
+  opts.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === correct) btn.classList.add('correct');
+    else if (i === oi) btn.classList.add('wrong');
+  });
+  document.getElementById(`exp_${artId}_${qi}`).style.display = 'block';
+
+  // Check all answered
+  const allAnswered = a.quiz.every((_, i) => quizAnswered[i]);
+  if (allAnswered) {
+    document.getElementById(`banner_${artId}`).style.display = 'block';
+    saveProgress(artId);
+    updateProgress();
+    setTimeout(() => {
+      document.getElementById(`banner_${artId}`).scrollIntoView({ behavior: 'smooth' });
+    }, 200);
+  }
+}
+
+// Init
+loadProgress();
+renderList();
+updateProgress();
+</script>
+</body>
+</html>
