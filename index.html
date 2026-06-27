@@ -228,6 +228,12 @@
     .h-title { font-size: 1.5rem; }
   }
 </style>
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="閱讀小教室">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <meta name="theme-color" content="#00D4FF">
 </head>
 <body>
 <div class="wrap">
@@ -475,6 +481,15 @@ function init(){
   document.getElementById('totalPct').textContent=(total/200*100).toFixed(1);
 }
 init();
+</script>
+<script>
+if("serviceWorker" in navigator){
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js")
+      .then(r => console.log("SW registered"))
+      .catch(e => console.log("SW error", e));
+  });
+}
 </script>
 </body>
 </html>
