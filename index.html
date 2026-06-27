@@ -60,7 +60,7 @@
 
   .sys-tag {
     font-family: 'Orbitron', monospace;
-    font-size: 0.6rem; letter-spacing: 5px;
+    font-size: 0.85rem; letter-spacing: 5px;
     color: rgba(0,212,255,0.55); margin-bottom: 18px;
   }
 
@@ -89,16 +89,16 @@
   }
 
   .h-title {
-    font-size: 1.95rem; font-weight: 900; color: #fff;
+    font-size: 2.4rem; font-weight: 900; color: #fff;
     letter-spacing: 4px;
     text-shadow: 0 0 24px rgba(0,212,255,0.45);
   }
-  .h-sub { font-size: 0.82rem; color: var(--muted); margin-top: 8px; letter-spacing: 2px; }
+  .h-sub { font-size: 1rem; color: var(--muted); margin-top: 8px; letter-spacing: 2px; }
   .h-badge {
     display: inline-block; margin-top: 14px;
     border: 1px solid rgba(0,212,255,0.4); color: var(--glow);
     border-radius: 99px; padding: 5px 22px;
-    font-size: 0.72rem; letter-spacing: 3px;
+    font-size: 0.88rem; letter-spacing: 3px;
     background: rgba(0,212,255,0.05);
     box-shadow: 0 0 14px rgba(0,212,255,0.1);
     font-family: 'Orbitron', monospace;
@@ -120,20 +120,20 @@
     background: linear-gradient(180deg, var(--glow), var(--glow2));
     border-radius: 99px;
   }
-  .total-lbl { font-size: 0.6rem; letter-spacing: 4px; color: var(--muted); font-family: 'Orbitron', monospace; }
+  .total-lbl { font-size: 0.82rem; letter-spacing: 4px; color: var(--muted); font-family: 'Orbitron', monospace; }
   .total-num {
-    font-size: 1.55rem; font-weight: 900; color: var(--glow);
+    font-size: 1.9rem; font-weight: 900; color: var(--glow);
     font-family: 'Orbitron', monospace;
     text-shadow: 0 0 14px rgba(0,212,255,0.5); margin-top: 3px;
   }
   .total-right { flex: 1; }
   .t-bar { background: rgba(255,255,255,0.05); border-radius: 99px; height: 7px; overflow: hidden; margin-top: 10px; border: 1px solid rgba(255,255,255,0.06); }
   .t-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--glow), var(--glow2)); box-shadow: 0 0 8px var(--glow); transition: width 0.8s ease; }
-  .t-pct { font-size: 0.65rem; color: var(--muted); margin-top: 5px; font-family: 'Orbitron', monospace; }
+  .t-pct { font-size: 0.85rem; color: var(--muted); margin-top: 5px; font-family: 'Orbitron', monospace; }
 
   /* ══ SECTION LABEL ══ */
   .sec-lbl {
-    font-size: 0.6rem; letter-spacing: 5px; color: var(--muted);
+    font-size: 0.85rem; letter-spacing: 5px; color: var(--muted);
     font-family: 'Orbitron', monospace;
     display: flex; align-items: center; gap: 10px;
     margin-bottom: 14px;
@@ -193,15 +193,15 @@
   }
   .card:hover .sheen { left: 130%; }
 
-  .c-num { font-size: 0.58rem; letter-spacing: 3px; color: var(--cc); font-family: 'Orbitron', monospace; opacity: 0.75; }
-  .c-emoji { font-size: 1.9rem; display: block; margin: 7px 0 5px; }
-  .c-title { font-size: 1.02rem; font-weight: 900; color: #fff; letter-spacing: 1px; }
-  .c-sub { font-size: 0.72rem; color: rgba(200,230,255,0.5); margin-top: 3px; }
+  .c-num { font-size: 0.8rem; letter-spacing: 3px; color: var(--cc); font-family: 'Orbitron', monospace; opacity: 0.75; }
+  .c-emoji { font-size: 2.4rem; display: block; margin: 7px 0 5px; }
+  .c-title { font-size: 1.25rem; font-weight: 900; color: #fff; letter-spacing: 1px; }
+  .c-sub { font-size: 0.92rem; color: rgba(200,230,255,0.5); margin-top: 3px; }
 
   .c-prog { margin-top: 13px; }
   .c-bar { background: rgba(0,0,0,0.3); border-radius: 99px; height: 5px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
   .c-fill { height: 100%; border-radius: 99px; background: var(--cc); box-shadow: 0 0 6px var(--cc); transition: width 0.6s ease; }
-  .c-lbl { font-size: 0.62rem; color: rgba(200,230,255,0.4); margin-top: 5px; font-family: 'Orbitron', monospace; display: flex; justify-content: space-between; }
+  .c-lbl { font-size: 0.8rem; color: rgba(200,230,255,0.4); margin-top: 5px; font-family: 'Orbitron', monospace; display: flex; justify-content: space-between; }
 
   /* unit theme colors */
   .u1  { --cc: #4CAF50; }
@@ -218,11 +218,28 @@
   /* ══ FOOTER ══ */
   footer {
     text-align: center; padding: 30px 0 0;
-    font-size: 0.6rem; color: rgba(74,127,165,0.6);
+    font-size: 0.82rem; color: rgba(74,127,165,0.6);
     letter-spacing: 3px; font-family: 'Orbitron', monospace; line-height: 2.2;
   }
   footer em { color: rgba(0,212,255,0.5); font-style: normal; }
 
+  @media (min-width: 700px) {
+    .wrap { padding: 0 32px 80px; }
+    .grid { grid-template-columns: repeat(2, 1fr); gap: 18px; }
+    .card { padding: 24px 22px 18px; }
+    .c-emoji { font-size: 2.8rem !important; }
+    .c-title { font-size: 1.4rem !important; }
+    .c-sub { font-size: 1rem !important; }
+    .c-num { font-size: 0.9rem !important; }
+    .c-lbl { font-size: 0.9rem !important; }
+    .h-title { font-size: 2.8rem !important; }
+    .h-sub { font-size: 1.1rem !important; }
+    .h-badge { font-size: 0.9rem !important; }
+    .total-lbl { font-size: 0.95rem !important; }
+    .total-num { font-size: 2.2rem !important; }
+    .t-pct { font-size: 0.95rem !important; }
+    .mascot svg { width: 130px !important; height: 130px !important; }
+  }
   @media (max-width: 440px) {
     .grid { grid-template-columns: 1fr; }
     .h-title { font-size: 1.5rem; }
